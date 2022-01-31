@@ -3,3 +3,4 @@
 Course repository for Environmental Data Analytics (ENV 872L) at Duke University, Spring 2022
 
 Name: Katie Owens
+Name- personal machine: K. Owens
