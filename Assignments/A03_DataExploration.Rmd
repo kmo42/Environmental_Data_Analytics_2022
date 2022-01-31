@@ -1,6 +1,6 @@
 ---
 title: "Assignment 3: Data Exploration"
-author: "Student Name, Section #0"
+author: "Katherine Owens, Section #0"
 output: pdf_document
 geometry: margin=2.54cm
 ---
@@ -22,15 +22,29 @@ The completed exercise is due on <>.
 ## Set up your R session
 
 1. Check your working directory, load necessary packages (tidyverse), and upload two datasets: the ECOTOX neonicotinoid dataset (ECOTOX_Neonicotinoids_Insects_raw.csv) and the Niwot Ridge NEON dataset for litter and woody debris (NEON_NIWO_Litter_massdata_2018-08_raw.csv). Name these datasets "Neonics" and "Litter", respectively. **Be sure to add the `stringsAsFactors = TRUE` parameter to the function when reading in the CSV files.**
-```{r,  message = FALSE}
 
+```{r, wd and packages message = FALSE, stringsAsFactors = TRUE}
+getwd()
+
+#"C:/Users/Katherine/Documents/872-Data Analytics/Environmental_Data_Analytics_2022/Assignments"
+
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
 ```
+
+```{r,  import datasets message = FALSE}
+Neonics_data <- read.csv('../Data/Raw/ECOTOX_Neonicotinoids_Insects_raw.csv')
+
+Litter_data<- read.csv('../Data/Raw/NEON_NIWO_Litter_massdata_2018-08_raw.csv')
+```
+
 
 ## Learn about your system
 
 2. The neonicotinoid dataset was collected from the Environmental Protection Agency's ECOTOX Knowledgebase, a database for ecotoxicology research. Neonicotinoids are a class of insecticides used widely in agriculture. The dataset that has been pulled includes all studies published on insects. Why might we be interested in the ecotoxicologoy of neonicotinoids on insects? Feel free to do a brief internet search if you feel you need more background information. 
 
-> Answer: 
+> Answer: Neonicotinoids can be toxic to sap-feeding insects like aphids and bees and cause paralysis and death of insects.
 
 3. The Niwot Ridge litter and woody debris dataset was collected from the National Ecological Observatory Network, which collectively includes 81 aquatic and terrestrial sites across 20 ecoclimatic domains. 32 of these sites sample forest litter and woody debris, and we will focus on the Niwot Ridge long-term ecological research (LTER) station in Colorado. Why might we be interested in studying litter and woody debris that falls to the ground in forests? Feel free to do a brief internet search if you feel you need more background information. 
 

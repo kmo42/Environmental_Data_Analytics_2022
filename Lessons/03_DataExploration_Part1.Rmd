@@ -1,11 +1,11 @@
 ---
-title: "3: Data Exploration"
+title: "3: Data Exploration-KO"
 author: "Environmental Data Analytics | John Fay and Luana Lima | Developed by Kateri Salk"
 date: "Spring 2022"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
-  chunk_output_type: console
+  chunk_output_type: inline
 ---
 
 
@@ -29,6 +29,8 @@ In this course, we will always open the R project file for the course, and addit
 #i.e., the folder that houses the R Project file.
 
 getwd()
+
+#[1] "C:/Users/Katherine/Documents/872-Data Analytics/Environmental_Data_Analytics_2022/Lessons"
 ```
 
 If your working directory is not set to the folder you want, you have several options. The first is to directly code your working directory. You may do this by defining an absolute file path (below). What are the pitfalls of using an absolute file path?
@@ -56,23 +58,29 @@ If you want to use a specific package that is not in your library already, you n
 
 If a package is already installed, you will need to load it every session. You can do this in two ways: 
 
-1. Click the box next to the package name in the Packages tab. 
+1. Click# We will use the packages dplyr and ggplot2 regularly. 
+install.packages("dplyr") 
+install.packages("ggplot2")
+install.packages("tidyverse")
+# comment out install commands,  the box next to the package name in the Packages tab. 
 
 2. Type `library(packagename)` into your R chunk or console.
+```{r installing packages}
+install.packages("dplyr") 
+install.packages("ggplot2")
+install.packages("tidyverse")
+```
 
 
 ```{r packages}
-# We will use the packages dplyr and ggplot2 regularly. 
-#install.packages("dplyr") 
-#install.packages("ggplot2")
-# comment out install commands, use only when needed and re-comment
+use only when needed and re-comment
 
 library(dplyr)
 library(ggplot2)
 
 # Some packages are umbrellas under which other packages are loaded
 #install.packages("tidyverse")
-library(tidyverse)
+#library(tidyverse)
 
 ```
 
@@ -92,23 +100,24 @@ Commons functions to import datasets and store as data frames are *read.table()*
 
 * *file = * : use this input to point to your data file. If it's on the same folder as your .Rmd then you only need to write the file name. But if it's on another folder you need to point to the path were file is located;
 * *header =* : if your file has a header you should set this to TRUE, o.w. FALSE;
-* *skip =* : if your file has rows explaining the data or any other rows on the top that need to be skipped you should just set skip to be equal to the number of row that should be skipped before reading the data. Mote that if header=TRUE, you should not skip the row with the header. The defaul is *skip=0*;
+* *skip =* : if your file has rows explaining the data or any other rows on the top that need to be skipped you should just set skip to be equal to the number of row that should be skipped before reading the data. Note that if header=TRUE, you should not skip the row with the header. The defaul is *skip=0*;
 * *dec =* : define *dec="."* or *dec=","* depending on how it's defined on your set. The default is ".".
 
 ```{r importdata}
 # Absolute file path (not recommended)
 #read.csv("/Users/lmm89/OneDrive/Duke_University/7_Spring2021/ENV872_EDA/GitRepo_EDA_S2021/Environmental_Data_Analytics_2021/Data/Raw/USGS_Site02085000_Flow_Raw.csv")
 
-# Relative file path (friendly for users regardless of machine)
+# Relative file path (friendly for users regardless of machine)#KO: better for long-term use
 USGS.flow.data <- read.csv("../Data/Raw/USGS_Site02085000_Flow_Raw.csv")   
 #For knitting the .Rmd file you need to added an extra "." to the relative path
 # R Markdown documents are compiled in separate R sessions to enhance reproducibility, so you current R console has nothing to do with the compilation of the R Markdown documents.
 
-# What happens if we don't assign a name to our imported dataset?
+# What happens if we don't assign a name to our imported dataset? #need to import into environment with this line
+#USGS.flow.data <- read.csv("../Data/Raw/USGS_Site02085000_Flow_Raw.csv") 
 #read.csv("../Data/Raw/USGS_Site02085000_Flow_Raw.csv")
 
 # Another option is to choose with your browser
-# read.csv(file.choose())
+#read.csv(file.choose())
 
 # To import .txt files, use read.table rather than read.csv
 #read.table()
@@ -119,7 +128,7 @@ USGS.flow.data <- read.csv("../Data/Raw/USGS_Site02085000_Flow_Raw.csv")
 ## EXPLORE YOUR DATASET
 
 Take a moment to read through the README file associated with the USGS dataset on discharge at the Eno River. Where can you find this file? How does the placement and information found in this file relate to the best practices for reproducible data analysis?
-> ANSWER: 
+> ANSWER: It is in the metadata file in the data file for the class. It is good placement of the metadata being separated from the other types of files like output and lessons.
 
 ```{r exploredata}
 View(USGS.flow.data)
@@ -136,25 +145,25 @@ colnames(USGS.flow.data) <- c("agency_cd", "site_no", "datetime",
                               "gage.height.max", "gage.height.max.approval", 
                               "gage.height.min", "gage.height.min.approval", 
                               "gage.height.mean", "gage.height.mean.approval")
-str(USGS.flow.data)
-dim(USGS.flow.data)
-length(USGS.flow.data)
+str(USGS.flow.data) #shows head of df
+dim(USGS.flow.data) #shows #of rows and columns in dataset 
+length(USGS.flow.data) #tells number of columns in data
 
-head(USGS.flow.data)
-head(USGS.flow.data, 10)
-tail(USGS.flow.data, 5)
-USGS.flow.data[30000:30005, c(3, 8, 14)]
+head(USGS.flow.data) #1st 6 rows
+head(USGS.flow.data, 10) #show first 10 rows
+tail(USGS.flow.data, 5) #shows last 5 rows of data
+USGS.flow.data[30000:30005, c(3, 8, 14)] #asking for 5 rows, with only these columns 3,8,14
 
-class(USGS.flow.data$datetime)
-class(USGS.flow.data$discharge.mean)
-class(USGS.flow.data$gage.height.mean)
+class(USGS.flow.data$datetime)#to show what type of data is in the column
+class(USGS.flow.data$discharge.mean) #numeric type
+class(USGS.flow.data$gage.height.mean) #numeric type
 
-summary(USGS.flow.data)  #could point to column only with $
+summary(USGS.flow.data)   #gives the sum stats for every column #could point to column only with $
 
 ```
 
 What happened to blank cells in the spreadsheet when they were imported into R?
-> Answer: 
+> Answer: Turned into NA
 
 ## Adjusting Datasets
 
@@ -168,7 +177,7 @@ summary(USGS.flow.data$gage.height.mean)
 ```
 Question: What types of research questions might make it favorable to remove NAs from a dataset, and what types of research questions might make it favorable to retain NAs in the dataset?
 
-> Answer: 
+> Answer: Good to remove NAs in old data sets about things like water heights with a ton of missing values. Important to retain or transform NAs for datasets regarding time series analysis research questions.
 
 ```{r removeNA}
 USGS.flow.data.complete <- na.omit(USGS.flow.data)
