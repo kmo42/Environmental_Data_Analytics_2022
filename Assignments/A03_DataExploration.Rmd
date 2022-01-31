@@ -48,16 +48,15 @@ Litter_data<- read.csv('../Data/Raw/NEON_NIWO_Litter_massdata_2018-08_raw.csv')
 
 3. The Niwot Ridge litter and woody debris dataset was collected from the National Ecological Observatory Network, which collectively includes 81 aquatic and terrestrial sites across 20 ecoclimatic domains. 32 of these sites sample forest litter and woody debris, and we will focus on the Niwot Ridge long-term ecological research (LTER) station in Colorado. Why might we be interested in studying litter and woody debris that falls to the ground in forests? Feel free to do a brief internet search if you feel you need more background information. 
 
-> Answer: 
+> Answer: When leaves and debris fall to the ground and break down the CO2 absorbed by photosynthesis is in turn released back into the atmosphere as a part of global seasonal variations. Also, the more deforestation there is the more woody debris that is generated from the cuttings leading to more debris that can be transported and possibly inhibit growth in other ecosystems. 
 
 4. How is litter and woody debris sampled as part of the NEON network? Read the NEON_Litterfall_UserGuide.pdf document to learn more. List three pieces of salient information about the sampling methods here: 
 
 > Answer: 
-*
-*
-*
-
-
+*Dry weight mass data of litterfall and woody debris was collected from litter traps (both elevsted and on the ground) around different plants depending on plant function such as leaves, twigs, flowers, etc.
+* Collection devices included 0.5m^2square mesh ‘baskets’ elevated
+~80cm above the ground, and traps on the ground were 3m x 0.5 m rectangular areas. 
+*Individual sampling bouts were executed one time per year on 20 ground sites 40mx40m in size. Elevated baskets were sampled every 1-2 weeks in deciduous sites, and once every 1-2 months at evergreen sites. 
 
 ## Obtain basic summaries of your data (Neonics)
 
