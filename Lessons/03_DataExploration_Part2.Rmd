@@ -1,5 +1,5 @@
 ---
-title: "5: Data Exploration"
+title: "5: Data Exploration-KO"
 author: "Environmental Data Analytics | John Fay and Luana Lima | Developed by Kateri Salk"
 date: "Spring 2022"
 output: pdf_document
@@ -41,8 +41,8 @@ dim(USGS.flow.data)
 # Check our date column
 class(USGS.flow.data$datetime)
 
-USGS.flow.data$datetime <- as.Date(USGS.flow.data$datetime, format = "%Y-%m-%d") 
-class(USGS.flow.data$datetime)
+USGS.flow.data$datetime <- as.Date(USGS.flow.data$datetime, format = "%Y-%m-%d") #4 digit year, numeric months/numeric days with padded zeros #change from character to date format for object
+class(USGS.flow.data$datetime) #check the class of datetime
 
 ```
 
@@ -59,7 +59,15 @@ Visualize count data for categorical variables.
 
 ```{r, fig.height = 3, fig.width = 4}
 ggplot(USGS.flow.data, aes(x = discharge.mean.approval)) +
-  geom_bar()
+  geom_bar() 
+
+#KO: grammar of graphics #data for plot #aes=Aesthetics #taking discharge.mean.approval attribute to break down observations to get portions of each  
+
+#KO: made a bar plot, which is useful for categorical data
+
+ggplot(na.omit(USGS.flow.data), aes(x = discharge.mean.approval)) +
+  geom_bar() #removed NAs
+
 ```
 
 ### Histogram (function: geom_histogram)
@@ -67,24 +75,27 @@ ggplot(USGS.flow.data, aes(x = discharge.mean.approval)) +
 Visualize distributions of values for continuous numerical variables. What is happening in each line of code? Insert a comment above each line.
 
 ```{r, fig.height = 3, fig.width = 4}
-#
-ggplot(USGS.flow.data) +
-  geom_histogram(aes(x = discharge.mean))
+#KO: counts by value intervals, with numeric columns
+#x-axis is a number not word
 
-#
+#specify number of bins between 5-20, too few miss the trends, too many only show the noise rather than the signal
+ggplot(USGS.flow.data) +
+  geom_histogram(aes(x = discharge.mean)) 
+
+#changed the width and to 10 units
 ggplot(USGS.flow.data) +
   geom_histogram(aes(x = discharge.mean), binwidth = 10)
 
-#
+#can highlight something(ex:geom_histogram) and hit F1 for help to learn more
 ggplot(USGS.flow.data) +
-  geom_histogram(aes(x = discharge.mean), bins = 20)
+  geom_histogram(aes(x = discharge.mean), bins = 5)
 
-#
+#force x-axis to go from 0-500 with scale command to zoom in to hist
 ggplot(USGS.flow.data, aes(x = discharge.mean)) +
   geom_histogram(binwidth = 10) + 
-  scale_x_continuous(limits = c(0, 500))
+  scale_x_continuous(limits = c(0, 500)) 
   
-#
+#gage.ht to show peak, and find a finer pattern in the data
 ggplot(USGS.flow.data) +
   geom_histogram(aes(x = gage.height.mean))
 
@@ -96,12 +107,14 @@ An alternate to a histogram is a frequency polygon graph (distributions of value
 ```{r, fig.height = 3, fig.width = 4}
 #
 ggplot(USGS.flow.data) +
+ # geom_histogram(aes(x = gage.height.mean), bins = 50) +
   geom_freqpoly(aes(x = gage.height.mean), bins = 50) +
-  geom_freqpoly(aes(x = gage.height.min), bins = 50, color = "darkgray") +
+  geom_freqpoly(aes(x = gage.height.min), bins = 50, color = "red") +
   geom_freqpoly(aes(x = gage.height.max), bins = 50,  lty = 2) +
-  scale_x_continuous(limits = c(0, 10))
+  scale_x_continuous(limits = c(0, 10)) 
+#lty=line type #gage ht is what value to plot
 
-#
+#color values with categorical value, and adding legend, gage ht mean approval assigns red to a records, and green to p records, can set color to different categorical value
 ggplot(USGS.flow.data) +
   geom_freqpoly(aes(x = gage.height.mean, color = gage.height.mean.approval), bins = 50) +
   scale_x_continuous(limits = c(0, 10)) +
@@ -123,15 +136,27 @@ A box-and-whisker plot is yet another alternative to histograms (distributions o
 An alternate option is a violin plot, which displays density distributions, somewhat like a hybrid of the box-and-whiskers and the frequency polygon plot.
 
 ```{r, fig.height = 3, fig.width = 4}
-#
+#displaying a numeric value, and gage ht mean approval parses into two data sets; 
+
+#showing the median value with horizontal line in box, box shows quantiles with 50% of values in box 25-75% + outliers; many more outliers on left plot
+
+#looking at categorical distr
+
 ggplot(USGS.flow.data) +
   geom_boxplot(aes(x = gage.height.mean.approval, y = gage.height.mean))
 
-#
+#set the y to discharge mean, taking slices of data and taking the distribution
+
+#group and cut width commands slice data
+
+#showing the distr of values in the gage ht data with variations, two numeric categories
+
+#like histograms by showing counts of slices, with tight distr and broader IQR to the right
+
 ggplot(USGS.flow.data) +
   geom_boxplot(aes(x = gage.height.mean, y = discharge.mean, group = cut_width(gage.height.mean, 1)))
 
-#
+#looking at range + distr and showing the width meaning how many data points,
 ggplot(USGS.flow.data) +
   geom_violin(aes(x = gage.height.mean.approval, y = gage.height.mean), 
               draw_quantiles = c(0.25, 0.5, 0.75))
@@ -141,30 +166,36 @@ ggplot(USGS.flow.data) +
 Visualize relationships between continuous numerical variables.
 
 ```{r, fig.height = 3, fig.width = 4}
-ggplot(USGS.flow.data) +
+#tells us the relations among variables
+#with more volume, gage ht doesn't increase, wider stream head=less volume
+#trend with lots of data in lower left corner
+ggplot(USGS.flow.data)+
   geom_point(aes(x = discharge.mean, y = gage.height.mean))
 
+#hybrid btwn cat and continuous, showing mean discharge at diff times; 
+#big break in data for site and some flood events w/ top outliers
+#time series good wit line plot
 ggplot(USGS.flow.data) +
   geom_point(aes(x = datetime, y = discharge.mean))
 ```
 
 Question: under what circumstances would it be beneficial to use each of these graph types (bar plot, histogram, frequency polygon, box-and whisker, violin, scatterplot)?
 
-> Answer: 
+> Answer: Bar plot good for categorical like polysci yes/no surveys, histogram good for showing counts of values like mean tree heights, frequency polygon good to fit monte carlo simulation, box-and whisker helpful with showing outlier events and median with numerical data sets, violin is good to show the distribution + values so for example the number of people that attended the fair at each hour of the day, and scatterplots are helpful to identify the spread of data and relationships between variables like with water coming out of a dam for energy generation.
 
 ## Ending discussion
 
 What did you learn about the USGS discharge dataset today? What separate insights did the different graph types offer?
-> Answer: 
+> Answer: The USGS data set represents stream discharge rates with values that are largely approved. Most of the time the discharge mean was below 500 and 4 for the gauge height. There were some flooding events, and a chunk of time with no data collected, and most of the time the gauge height mean was around 1.75 with over 1500 observations.  
 
 
 How can multiple options for data exploration inform our understanding of our data?
 
-> Answer: 
+> Answer: Looking at the data with multiple options helped us inspect it from different angles like holding a bowl and observing different angles to see variations in the characteristics like ht, depth, width, overall size, chips, etc.
 
 
 Do you see any patterns in the USGS data for the Eno River? What might be responsible for those patterns and/or relationships?
 
-> Answer: 
+> Answer: Yes I see there are a few flooding events that might be because of large storms with heavy rainfall, but for the most part the flow is pretty steady with a gage height right around 2 majority of the time. Perhaps a flood was so intense it disabled the gauge and that is why there was missing data. Overall, the seasonal weather variations or dam activities could account for the variations of discharge over time, but for the most part it flows consistently. 
 
 
