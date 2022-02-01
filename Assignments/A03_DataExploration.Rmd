@@ -101,34 +101,68 @@ attributes(Neonics_data$Conc.1..Author.)
 ## Explore your data graphically (Neonics)
 
 9. Using `geom_freqpoly`, generate a plot of the number of studies conducted by publication year. 
-```{r}
+```{r Publication Year Count}
+#example used to make Pub Year Plot from DatExpl-pt2 lines 109-114
+#ggplot(Neonics_data) +
+ # geom_histogram(aes(x = gage.height.mean), bins = 50) +
+#  geom_freqpoly(aes(x = Publication.Year, color =  Test.Location), bins =  #   50) +
+#  geom_freqpoly(aes(x = Test.Location), bins = 50, color = "purple") +
+ # geom_freqpoly(aes(x = gage.height.max), bins = 50,  lty = 2) +
+# scale_x_continuous(limits = c(0, 10)) 
 
+ggplot(Neonics_data) +
+  geom_freqpoly(aes(x = Publication.Year), bins = 50) 
 ```
+ 
 
 10. Reproduce the same graph but now add a color aesthetic so that different Test.Location are displayed as different colors.
-```{r}
+```{r colors to show locations}
+#correct plot above
+#ggplot(Neonics_data) +
+ # geom_freqpoly(aes(x = Publication.Year), bins = 50) 
 
+ggplot(Neonics_data) +
+  geom_freqpoly(aes(x = Publication.Year, color = Test.Location), bins = 50) +
+  #scale_x_continuous(limits = c(0, 10)) +
+  theme(legend.position = "top")
+ 
+#example of colors from 03_DataExpl_pt2 under ###FreqLinGr lines 118-121
+#ggplot(USGS.flow.data) +
+ # geom_freqpoly(aes(x = gage.height.mean, color = gage.height.mean.approval), bins = 50) +
+
+#  scale_x_continuous(limits = c(0, 10)) +
+  #theme(legend.position = "top")
 ```
 
 Interpret this graph. What are the most common test locations, and do they differ over time?
 
-> Answer: 
+> Answer: Most common test locations are in the lab with over 1100 observations, and more lab tests were done after the year 2010, possibly reflecting a more efficient sample/test method rather that performing the tests in the field, which used to occur more frequently prior to 2010. 
 
 11. Create a bar graph of Endpoint counts. What are the two most common end points, and how are they defined? Consult the ECOTOX_CodeAppendix for more information. 
 
-```{r}
+```{r Neonics endpoint bar chart}
+#from 03_DatExpl lines 61-62 under Bar Chart
+ggplot(Neonics_data, aes(x = Endpoint)) +
+  geom_bar()
+sort(table(Neonics_data$Endpoint), decreasing = TRUE)
 
+#Leads to NOEL=1816, and LOEL=1664
 ```
 
-> Answer: 
->
+> Answer: Endpoints displayed with a code of letters combinations identify links between effecs for insecticides like accumulation of chemicals, cellular stuctural variations in bones and tissue in insects, etc. The two most common are NOEL and LOEL which are no to low observable effects.
+
+>NOEL: No-observable-effect-level: highest dose (concentration) producing effects not significantly different from responses of controls according to author's reported statistical tes.
+
+>LOEL: Lowest-observable-effect-level: lowest dose (concentration) producing effects that were significantly different (as reported by authors) from responses of controls.
+
 
 ## Explore your data (Litter)
 
 12. Determine the class of collectDate. Is it a date? If not, change to a date and confirm the new class of the variable. Using the `unique` function, determine which dates litter was sampled in August 2018. 
-```{r}
-
+```{r date}
+class(Litter_data$collectDate)
 ```
+>Also looked in the file and collectDate is a date in character format according to RStudio.  
 
 13. Using the `unique` function, determine how many plots were sampled at Niwot Ridge. How is the information obtained from `unique` different from that obtained from `summary`?
 
