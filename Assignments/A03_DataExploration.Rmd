@@ -62,32 +62,39 @@ Litter_data<- read.csv('../Data/Raw/NEON_NIWO_Litter_massdata_2018-08_raw.csv')
 
 5. What are the dimensions of the dataset?
 
-```{r}
-
+```{r data dims}
+dim(Neonics_data) #has 4623 rows and 30 columns
+dim(Litter_data) #has 188 rows and 30 columns
 ```
 
-6. Using the `summary` function on the "Effect" column, determine the most common effects that are studied. Why might these effects specifically be of interest?
-```{r}
+6. Using the `summary` function on the "Effect" column, determine the most common effects that are studied. Why might these effects specifically be of interest? 
+> Answer: The most common effects are how the insecticide affected life or death reates, growth, population, behavior immunological, etc. What appeared the most though was an effect of mortality.
 
+```{r}
+head(Neonics_data$Effect,100)
+summary(Neonics_data$Effect)
 ```
 
-> Answer: 
 
 7. Using the `summary` function, determine the six most commonly studied species in the dataset (common name). What do these species have in common, and why might they be of interest over other insects? Feel free to do a brief internet search for more information if needed.
 
-```{r}
-
+```{r summary of species counts}
+head(Neonics_data$Species.Common.Name,10)
+summary(Neonics_data$Species.Common.Name)
+sort(table(Neonics_data$Species.Common.Name), decreasing = TRUE)
 ```
 
-> Answer: 
+> Answer: Honey Bee=667,Parasitic Wasp=285, Buff Tailed Bumblebee=183, Carniolan Honey Bee=152, Bumble Bee=140, Italian Honeybee=113. All of these species fly and five out of six of them are types of bees, which are crucial for pollination of plants for agriculture. If all the bees start dying from insecticides, then farms won't be able to produce as much food and there will be shortages. We need safer insecticides for bees.  
 
 8. Concentrations are always a numeric value. What is the class of Conc.1..Author. in the dataset, and why is it not numeric?
 
-```{r}
-
+```{r class type}
+class(Neonics_data$Conc.1..Author.)
+head (Neonics_data$Conc.1..Author.,20)
+attributes(Neonics_data$Conc.1..Author.)
 ```
 
-> Answer:
+> Answer: In the dataset the Conc.1..Author. has character arguments because there is no set format and therefore defaults to the character class most likely because of the presence of special characters like slashes and tildas. 
 
 
 
