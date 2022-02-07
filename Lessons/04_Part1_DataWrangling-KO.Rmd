@@ -28,7 +28,8 @@ getwd()
 #install.packages(tidyverse)
 library(tidyverse)
 #install.packages(lubridate)
-library(lubridate) 
+library(lubridate)
+NTL.phys.data <- read.csv("./Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv", stringsAsFactors = TRUE)
 
 colnames(NTL.phys.data)
 head(NTL.phys.data)
@@ -57,6 +58,10 @@ What is the best way to wrangle data? There are multiple ways to arrive at a spe
 
 ```{r, results = "hide"}
 vignette("dplyr")
+
+#rows: slice= based on location 
+#columns: mutate=useful to create a new columns based on existing values in a columns; 
+#relocate= move columns into groups
 ```
 
 ### Filter
@@ -64,7 +69,7 @@ vignette("dplyr")
 Filtering allows us to choose certain rows (observations) in our dataset.
 
 Here are the relevant commands used in the `filter` function. Add some notes to designate what these commands mean. 
-`==`
+`==` #compare
 `!=`
 `<`
 `<=`
@@ -72,17 +77,31 @@ Here are the relevant commands used in the `filter` function. Add some notes to 
 `>=`
 `&`
 `|`
+```{r}
+`==` #compare value to a specific value, if/for/if statements
+`!=` #check if values are equal
+`<` 
+`<=`
+`>`
+`>=`
+`&` #checking multiple conditions if want both to true
+`|` #checking mult. conds if one true and other false
+
+```
 
 ```{r}
-class(NTL.phys.data$lakeid)
-class(NTL.phys.data$depth)
+class(NTL.phys.data$lakeid)#can only compare things with sim classes, char with char; num with num
+class(NTL.phys.data$depth) #with num depth, can use >< notation
 
 # matrix filtering
 NTL.phys.data.surface1 <- NTL.phys.data[NTL.phys.data$depth == 0,]
+    #filtering the rows that have 0 in column depth
 
 # dplyr filtering
 NTL.phys.data.surface2 <- filter(NTL.phys.data, depth == 0)
+    #filter dataset, column with 0s
 NTL.phys.data.surface3 <- filter(NTL.phys.data, depth < 0.25)
+    #filter original dataset for depths with less than 0.25 
 
 # Did the methods arrive at the same result?
 head(NTL.phys.data.surface1)
@@ -102,8 +121,8 @@ NTL.phys.data.PeterPaul2 <- filter(NTL.phys.data, lakename != "Central Long Lake
 NTL.phys.data.PeterPaul3 <- filter(NTL.phys.data, lakename %in% c("Paul Lake", "Peter Lake"))
 
 # Choose a range of conditions of a numeric or integer variable
-summary(NTL.phys.data$daynum)
-NTL.phys.data.JunethruOctober1 <- filter(NTL.phys.data, daynum > 151 & daynum < 305)
+summary(NTL.phys.data$daynum)#151 not included range from 152-304 with 305 not included bc is nov 1st
+NTL.phys.data.JunethruOctober1 <- filter(NTL.phys.data, daynum > 151 & daynum < 305) # & and , yield same results
 NTL.phys.data.JunethruOctober2 <- filter(NTL.phys.data, daynum > 151, daynum < 305)
 NTL.phys.data.JunethruOctober3 <- filter(NTL.phys.data, daynum >= 152 & daynum <= 304)
 NTL.phys.data.JunethruOctober4 <- filter(NTL.phys.data, daynum %in% c(152:304))

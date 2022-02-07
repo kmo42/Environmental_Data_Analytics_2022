@@ -1,8 +1,10 @@
 ---
 title: "Assignment 4: Data Wrangling"
-author: "Student Name"
+author: "Katherine Owens"
 output: pdf_document
 geometry: margin=2.54cm
+editor_options: 
+  chunk_output_type: console
 ---
 
 ## OVERVIEW
@@ -23,10 +25,37 @@ The completed exercise is due on Monday, Feb 7 @ 7:00pm.
 
 2. Explore the dimensions, column names, and structure of the datasets. 
 
+
 ```{r, message = FALSE}
-#1
+#1 
+getwd()
+#install.packages(tidyverse)
+library(tidyverse)
+#install.packages(lubridate)
+library(lubridate)
+
+EPAair_O3_18_data <- read.csv("../Data/Raw/EPAair_O3_NC2018_raw.csv", stringsAsFactors = TRUE)
+EPAair_O3_19_data <- read.csv("../Data/Raw/EPAair_O3_NC2019_raw.csv", stringsAsFactors = TRUE)
+EPAair_pm2.5_18_data <- read.csv("../Data/Raw/EPAair_PM25_NC2018_raw.csv", stringsAsFactors = TRUE)
+EPAair_pm2.5_19_data <- read.csv("../Data/Raw/EPAair_PM25_NC2019_raw.csv", stringsAsFactors = TRUE)
 
 #2
+dim(EPAair_O3_18_data)
+colnames(EPAair_O3_18_data)
+str(EPAair_O3_18_data)
+
+dim(EPAair_O3_19_data)
+colnames(EPAair_O3_19_data)
+str(EPAair_O3_19_data)
+
+dim(EPAair_pm2.5_18_data)
+colnames(EPAair_pm2.5_18_data)
+str(EPAair_pm2.5_18_data)
+
+
+dim(EPAair_pm2.5_19_data)
+colnames(EPAair_pm2.5_19_data)
+str(EPAair_pm2.5_19_data)
 ```
 
 ## Wrangle individual datasets to create processed files.
@@ -36,14 +65,74 @@ The completed exercise is due on Monday, Feb 7 @ 7:00pm.
 6. Save all four processed datasets in the Processed folder. Use the same file names as the raw files but replace "raw" with "processed".
 
 ```{r}
-#3
+#3 
+#Format sampledate as date
+class(EPAair_O3_18_data$Date)
+EPAair_O3_18_data$Date <- as.Date(EPAair_O3_18_data$Date, format = "%m/%d/%y")
+class(EPAair_O3_18_data$Date)
 
-#4
+class(EPAair_O3_19_data$Date)
+EPAair_O3_19_data$Date <- as.Date(EPAair_O3_19_data$Date, format = "%m/%d/%y")
 
-#5
+class(EPAair_pm2.5_18_data$Date)
+EPAair_pm2.5_18_data$Date <- as.Date(EPAair_pm2.5_18_data$Date, format = "%m/%d/%y")
+class(EPAair_pm2.5_18_data$Date)
 
-#6
+class(EPAair_pm2.5_19_data$Date)
+EPAair_pm2.5_19_data$Date <- as.Date(EPAair_pm2.5_19_data$Date, format = "%m/%d/%y")
+class(EPAair_pm2.5_19_data$Date)
 
+head(EPAair_O3_18_data$Date)
+head(EPAair_O3_19_data$Date)
+head(EPAair_pm2.5_18_data$Date)
+head(EPAair_pm2.5_19_data$Date)
+
+#4 Select the following columns: Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE
+select(EPAair_O3_18_data,'Date')
+select(EPAair_O3_18_data,'DAILY_AQI_VALUE')
+select(EPAair_O3_18_data,'Site.Name')
+select(EPAair_O3_18_data,'AQS_PARAMETER_DESC')
+select(EPAair_O3_18_data,'COUNTY')
+select(EPAair_O3_18_data,'SITE_LATITUDE')
+select(EPAair_O3_18_data,'SITE_LONGITUDE')
+
+select(EPAair_O3_19_data,'Date')
+select(EPAair_O3_19_data,'DAILY_AQI_VALUE')
+select(EPAair_O3_19_data,'Site.Name')
+select(EPAair_O3_19_data,'AQS_PARAMETER_DESC')
+select(EPAair_O3_19_data,'COUNTY')
+select(EPAair_O3_19_data,'SITE_LATITUDE')
+select(EPAair_O3_19_data,'SITE_LONGITUDE')
+
+select(EPAair_pm2.5_18_data,'Date')
+select(EPAair_pm2.5_18_data,'DAILY_AQI_VALUE')
+select(EPAair_pm2.5_18_data,'Site.Name')
+select(EPAair_pm2.5_18_data,'AQS_PARAMETER_DESC')
+select(EPAair_pm2.5_18_data,'COUNTY')
+select(EPAair_pm2.5_18_data,'SITE_LATITUDE')
+select(EPAair_pm2.5_18_data,'SITE_LONGITUDE')
+
+select(EPAair_pm2.5_19_data,'Date')
+select(EPAair_pm2.5_19_data,'DAILY_AQI_VALUE')
+select(EPAair_pm2.5_19_data,'Site.Name')
+select(EPAair_pm2.5_19_data,'AQS_PARAMETER_DESC')
+select(EPAair_pm2.5_19_data,'COUNTY')
+select(EPAair_pm2.5_19_data,'SITE_LATITUDE')
+select(EPAair_pm2.5_19_data,'SITE_LONGITUDE')
+
+#5 For the PM2.5 datasets, fill all cells in AQS_PARAMETER_DESC with "PM2.5" (all cells in this column should be identical).
+EPAair_pm2.5_18_data$AQS_PARAMETER_DESC <-'PM2.5'
+EPAair_pm2.5_19_data$AQS_PARAMETER_DESC <-'PM2.5'
+
+#6 Save all four processed datasets in the Processed folder. Use the same file names as the raw files but replace "raw" with "processed".
+
+write.csv(EPAair_O3_18_data, row.names = FALSE, file = "./Data/Processed/EPAair_O3_2018_data_Processed.csv")
+
+write.csv(EPAair_O3_19_data, row.names = FALSE, file = "./Data/Processed/EPAair_O3_2019_data_Processed.csv")
+
+write.csv(EPAair_pm2.5_18_data, row.names = FALSE, file = "./Data/Processed/EPAair_pm2.5_2018_data_Processed.csv")
+
+write.csv(EPAair_pm2.5_19_data, row.names = FALSE, file = "./Data/Processed/EPAair_pm2.5_2019_data_Processed.csv")
 ```
 
 
