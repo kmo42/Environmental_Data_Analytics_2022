@@ -1,6 +1,6 @@
 ---
 title: "Assignment 3: Data Exploration"
-author: "Katherine Owens, Section #0"
+author: "Katherine Owens, Section #01 Monday"
 output: pdf_document
 geometry: margin=2.54cm
 ---
@@ -23,7 +23,7 @@ The completed exercise is due on <>.
 
 1. Check your working directory, load necessary packages (tidyverse), and upload two datasets: the ECOTOX neonicotinoid dataset (ECOTOX_Neonicotinoids_Insects_raw.csv) and the Niwot Ridge NEON dataset for litter and woody debris (NEON_NIWO_Litter_massdata_2018-08_raw.csv). Name these datasets "Neonics" and "Litter", respectively. **Be sure to add the `stringsAsFactors = TRUE` parameter to the function when reading in the CSV files.**
 
-```{r, wd and packages message = FALSE, stringsAsFactors = TRUE}
+```{r}
 getwd()
 
 #"C:/Users/Katherine/Documents/872-Data Analytics/Environmental_Data_Analytics_2022/Assignments"
@@ -33,10 +33,11 @@ library(ggplot2)
 library(tidyverse)
 ```
 
-```{r,  import datasets message = FALSE}
-Neonics_data <- read.csv('../Data/Raw/ECOTOX_Neonicotinoids_Insects_raw.csv')
+```{r message = FALSE}
+#import data sets
+Neonics_data <- read.csv('../Data/Raw/ECOTOX_Neonicotinoids_Insects_raw.csv')#, stringsAsFactors = TRUE)
 
-Litter_data<- read.csv('../Data/Raw/NEON_NIWO_Litter_massdata_2018-08_raw.csv')
+Litter_data<- read.csv('../Data/Raw/NEON_NIWO_Litter_massdata_2018-08_raw.csv')#, stringsAsFactors = TRUE)
 ```
 
 
@@ -160,32 +161,48 @@ sort(table(Neonics_data$Endpoint), decreasing = TRUE)
 
 12. Determine the class of collectDate. Is it a date? If not, change to a date and confirm the new class of the variable. Using the `unique` function, determine which dates litter was sampled in August 2018. 
 ```{r date}
-class(Litter_data$collectDate)
-```
->Also looked in the file and collectDate is a date in character format according to RStudio.  
+#example from 03_DatExpl lines 230-24
+class(Litter_data$collectDate)#character
 
+
+#puts in numercial date format with as.date fcn
+Litter_data$collectDate <- as.Date(Litter_data$collectDate, format = "%Y-%m-%d")
+
+class(Litter_data$collectDate)
+view(Litter_data$collectDate)
+
+unique(Litter_data$collectDate)
+```
 13. Using the `unique` function, determine how many plots were sampled at Niwot Ridge. How is the information obtained from `unique` different from that obtained from `summary`?
 
 ```{r}
+help(unique)
 
+unique(Litter_data$plotID)
 ```
 
-> Answer: 
+> Answer: Summary treats the numbers as numbers to be added/subtracted etc., but unique treats them as IDs like zip codes. 12 plots were sampled.
 
 14. Create a bar graph of functionalGroup counts. This shows you what type of litter is collected at the Niwot Ridge sites. Notice that litter types are fairly equally distributed across the Niwot Ridge sites.
-```{r}
-
+```{r niwot bar}
+ggplot(Litter_data, aes(x = functionalGroup)) +
+  geom_bar() 
 ```
 
 15. Using `geom_boxplot` and `geom_violin`, create a boxplot and a violin plot of dryMass by functionalGroup. 
-```{r}
-
+```{r boxplot}
+ggplot(Litter_data) +
+  geom_boxplot(aes(x = dryMass, y = functionalGroup))
 ```
-
+```{r violin}
+ggplot(Litter_data) +
+  geom_violin(aes(x = dryMass, y = functionalGroup), 
+              draw_quantiles = c(0.25, 0.5, 0.75))
+```
 Why is the boxplot a more effective visualization option than the violin plot in this case?
 
-> Answer: 
+> Answer: It works beter because it shows the mean and distribution of the data more effectively versus everything looking squished in the violin plot.
 
 What type(s) of litter tend to have the highest biomass at these sites? 
 
-> Answer: 
+> Answer: Needles and mixed have the highest biomass at these sites.
