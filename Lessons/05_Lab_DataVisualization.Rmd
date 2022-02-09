@@ -57,7 +57,7 @@ EPAair <- read.csv("./Data/Processed/EPAair_O3_PM25_NC1819_Processed.csv", strin
 EPAair$Date <- as.Date(EPAair$Date, format = "%Y-%m-%d")
 PeterPaul.chem.nutrients$sampledate <- as.Date(PeterPaul.chem.nutrients$sampledate, format = "%Y-%m-%d")
 
-#question with errors about storing file loc
+#resolved-question with errors about storing file loc, had to do with being in the wrong project. Open project every time. 
 
 ```
 
@@ -74,6 +74,16 @@ Exercise: build your own scatterplots of PeterPaul.chem.nutrients
 # Change the ylab name
 #filtering begore entering ggplot, want to have one plot for one lake
 #change ylab(name of y axis) for labeling
+#challenges with 
+PeterPaulplot.Ex1 <-
+  ggplot(subset(PeterPaul.chem.nutrients, depth==0), aes(x=daynum,
+y=temperature_C))+
+    geom_point(aes(color=year4))+ 
+      #color by factor, color function inside the () 
+    facet_wrap(vars(lakename), nrow = 2)+ 
+      #dividing window into two rows with plot above the other
+    ylab("Surface Temperature")
+print(PerterPaulplot.Ex1)
 
 
 #2. 
@@ -85,12 +95,17 @@ Exercise: build your own scatterplots of PeterPaul.chem.nutrients
 # Change x axis to include marker/labels every 5 years
 
 #creat plot, look, create color points by year, look to understand commands, and then ask for help
-
-
-
-
-
-
+PeterPaulplot.Ex2 <-
+  ggplot(subset(PeterPaul.chem.nutrients, aes(x=sampledate,
+y=temperature_C))+
+  geom_point(aes(color=depth), size = 0.5) +
+  ylab("Temperature in Celcius") +
+  scale_color_viridis(option = "magma", direction = 
+                              #magma good for depicting temps
+                        -1) + 
+  scale_x_date(
+    date_breaks = "5 years", date_labels = "%Y")
+print(PeterPaulplot.Ex2)
 ```
 ## Plotting the relationship between two continuous variables: Scatterplot
 
@@ -100,8 +115,22 @@ Exercise: Plot relationships between air quality measurements
 
 # 3. 
 # Plot AQI values for ozone by PM2.5, colored by latitude 
-# Make the points 50 % transparent
+# Make the points 50 % transparent 
+    #with alpha argument in geompoint
 # Add a line of best fit for the linear regression of these variables.
+    #geosmooth
+EPA_scatter <-
+  ggplot(EPAair, aes(x = PM2.5 , y = Ozone)) +
+         geom_point(aes(color=meanLat), alpha=0.5)
+         geom_smooth(method = lm) + 
+          ylab(expression("0"[3]* "AQI Value"))
+            #using expression bc want degree symbol!
+print(EPA_scatter)
+
+#almost, need to add line somehow
+         
+       
+
 
 
 
@@ -117,6 +146,15 @@ Exercise: Plot distributions of AQI values for EPAair.
 # 4. 
 # Create several types of plots depicting PM2.5, divided by year. 
 # Choose which plot displays the data best and justify your choice. 
+  #trying different types of plot
+
+PMplot.color <- 
+  ggplot(EPAair, aes(x = Month, y = PM2.5, color = Year)) +
+  geom_point() + 
+  #color category by year, and month in x axis 
+  scale_x_continuous(limits = c(1,12), breaks = c(1:12))
+print(PMplot.color)
+  
 
 
 

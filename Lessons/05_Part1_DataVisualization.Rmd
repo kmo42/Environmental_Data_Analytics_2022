@@ -57,7 +57,7 @@ Here are some commonly used layers for plotting in ggplot:
 * geom_violin
 * geom_dotplot
 * geom_density_ridges
-* geom_point
+* geom_point #good for lab exercises
 * geom_errorbar
 * geom_smooth
 * geom_line
