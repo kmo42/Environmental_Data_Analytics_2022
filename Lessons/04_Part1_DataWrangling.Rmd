@@ -8,6 +8,7 @@ editor_options:
   chunk_output_type: console
 ---
 
+
 ## Objectives
 1. Describe the usefulness of data wrangling and its place in the data pipeline
 2. Wrangle datasets with dplyr functions

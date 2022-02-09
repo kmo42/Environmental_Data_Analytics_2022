@@ -7,7 +7,12 @@ geometry: margin=2.54cm
 editor_options: 
   chunk_output_type: console
 ---
-
+ #notes from class, + is the dam , and every time add a new layer inlcude a plus and go to next line, easier to  debug with less info on each line
+ #setting up themes of ggplot, can always use theme options in specific ggplot environment
+ #don't want too many colors unless they are telling a message
+ #cowplot and plotgrid for mult plots on a pg
+ #import plots to ppt
+ 
 ## Objectives
 1. Answer questions on M4/A4
 2. Answer questions on M5 videos
@@ -19,13 +24,18 @@ editor_options:
 The expression function can be used when you want to add mathematical symbols and subscripts mixed with regular letter to labels. 
 
 ```{r}
+#added
+library(ggplot2)
+
 Plot_text <-
 ggplot(data=data.frame(x=0,y=0))+
   geom_point(aes(x=x,y=y)) +
-  geom_text(x=0,y=0.025,label=expression(paste("Mean is ", mu,",", R^{2},'=0.6')))
+  geom_text(x=0,y=0.025,label=expression(paste("Mean is ", mu,",", R^{2},'=0.6'))) 
+    #KO Notes: specify location based on x,y value, label for text, expression=able to add greek letters, close to how we would enter an equation when write word of letter, R (like Word) will display symbol, _ for subscript with expression function
 print(Plot_text)
 
 ggsave("./Output/Plot_text.jpg",Plot_text, height = 4, width = 6, units = "in", dpi = 300)
+#stored in output folder
 
 ```
 
@@ -38,6 +48,7 @@ library(ggridges)
 library(viridis)
 library(RColorBrewer)
 library(colormap)
+library(ggplot2)
 
 PeterPaul.chem.nutrients <- 
   read.csv("./Data/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv", stringsAsFactors = TRUE)
@@ -45,6 +56,8 @@ EPAair <- read.csv("./Data/Processed/EPAair_O3_PM25_NC1819_Processed.csv", strin
 
 EPAair$Date <- as.Date(EPAair$Date, format = "%Y-%m-%d")
 PeterPaul.chem.nutrients$sampledate <- as.Date(PeterPaul.chem.nutrients$sampledate, format = "%Y-%m-%d")
+
+#question with errors about storing file loc
 
 ```
 
@@ -59,13 +72,21 @@ Exercise: build your own scatterplots of PeterPaul.chem.nutrients
 # Plot surface temperatures by day of  year. 
 # Color your points by year, and facet by lake in two rows.
 # Change the ylab name
+#filtering begore entering ggplot, want to have one plot for one lake
+#change ylab(name of y axis) for labeling
 
 
 #2. 
 # Plot temperature by date. Color your points by depth.
-# Change the size of your point to 0.5
+  #which geom? geom point, don't need to filter by surface depth, 
+# Change the size of your point to 0.5 
+  #want smaller points
 # Change the color palette to magma and play with direction (+- 1), which one makes more sense?
 # Change x axis to include marker/labels every 5 years
+
+#creat plot, look, create color points by year, look to understand commands, and then ask for help
+
+
 
 
 
