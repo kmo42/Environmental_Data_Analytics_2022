@@ -7,6 +7,7 @@ geometry: margin=2.54cm
 editor_options: 
   chunk_output_type: console
 ---
+>Linear regression and variable selection
 
 ## Objectives
 1. Describe the components of the generalized linear model (GLM)
@@ -18,9 +19,22 @@ editor_options:
 
 The analysis of variance (ANOVA), and linear regression are special cases of the **generalized linear model** (GLM). The GLM also includes analyses not covered in this class, including logistic regression, multinomial regression, chi square, and log-linear models. The common characteristic of general linear models is the expression of a continuous response variable as a linear combination of the effects of categorical or continuous explanatory variables, plus an error term that expresses the random error associated with the coefficients of all explanatory variables. The explanatory variables comprise the deterministic component of the model, and the error term comprises the stochastic component of the model. Historically, artificial distinctions were made between linear models that contained categorical and continuous explanatory variables, but this distinction is no longer made. The inclusion of these models within the umbrella of the GLM allows models to fit the main effects of both categorical and continuous explanatory variables as well as their interactions. 
 
+
+>Questions: play around with order, and then specify x/y first with aes on first line with aes
+>AIC compares diff lm models and tell which one is the best
+>understanding results:p-value = sigif of coef, plus overall p-value of model
+>r-sq: most of the variability of y is explained by variables in x, low r^2 means current variables are not explaiing ; how much of the variablility of the variables explaining y; is new variable helping improving the value of r^2; new variable may already be represented by variables present if r^2 doesn't change.
+>transform the data: log transformation is good sometimes, when take log end up with normal transformation, and tests work on log transformed data
+>when have a dataset that never goes below zero; lognormal distribution comes from log transform and goes from skew to normal
+>don't forget to exponetiate at the end, after log transform, to get dat is same magnidtude
+>trying to see if categorical variables have influence on continuous results
+> t-test useful when trying to make a statement about mean
+
+
 ### Choosing a model from your data: A "cheat sheet"
 
-**One-way ANOVA (Analysis of Variance):** Continuous response, one categorical explanatory variable with more than two categories.
+**One-way ANOVA (Analysis of Variance):** Continuous response, one categorical explanatory variable with more than two categories. 
+>for comparing means, expl variables on the right side
 
 **Two-way ANOVA (Analysis of Variance)** Continuous response, two categorical explanatory variables.
 
@@ -35,6 +49,7 @@ If multiple explanatory variables are chosen, they may be analyzed with respect 
 ### Assumptions of the GLM
 
 The GLM is based on the assumption that the data residuals approximate a normal distribution (or a linearly transformed normal distribution). We will discuss the non-parametric analogues to several of these tests if the assumptions of normality are violated. For tests that analyze categorical explanatory variables, the assumption is that the variance in the response variable is equal among groups. Note: environmental data often violate the assumptions of normality and equal variance, and we will often proceed with a GLM even if these assumptions are violated. In this situation, justifying the decision to proceed with a linear model must be made.
+>lm plots relate to residuals, checking to see if plot follows a normal distribution
 
 
 ## Set up
@@ -79,6 +94,7 @@ irradiance.regression <- lm(data = PeterPaul.chem.nutrients, irradianceWater ~ d
 summary(irradiance.regression)
 
 # Correlation
+#Useful to see if a good fit
 cor.test(PeterPaul.chem.nutrients$irradianceWater, PeterPaul.chem.nutrients$depth)
 ```
 Question: How would you report the results of this test (overall findings and report of statistical output)?
@@ -150,8 +166,9 @@ print(irradiancebydepth2)
 It is possible, and often useful, to consider multiple continuous explanatory variables at a time in a linear regression. For example, total phosphorus concentration in Paul Lake (the unfertilized lake) could be dependent on depth and dissolved oxygen concentration: 
 
 ``` {r, fig.height = 3, fig.width = 4}
-TPregression <- lm(data = subset(PeterPaul.chem.nutrients, lakename == "Paul Lake"), 
-                   tp_ug ~ depth + dissolvedOxygen)
+TPregression <- lm(data = subset(PeterPaul.chem.nutrients, lakename == "Paul Lake"), #first provide data frame with  =  
+                   tp_ug ~ depth + dissolvedOxygen) #directly adress arguments, and this is a formulat, if don't specify df, then would need to say 
+#dataframe$columns(tp_ug) ~ dataframe$columns(depth) + dataframe$columns(dissolvedOxygen)
 summary(TPregression)
 
 TPplot <- ggplot(subset(PeterPaul.chem.nutrients, lakename == "Paul Lake"), 
@@ -171,7 +188,7 @@ We can also make exploratory plots of several continuous data points to determin
 
 ```{r, fig.height = 3, fig.width = 4}
 #install.packages("corrplot")
-library(corrplot)
+library(corrplot) #nice visualization to see which candidates are best in regression, then step function for AIC
 PeterPaulnutrients <- 
   PeterPaul.chem.nutrients %>%
   select(tn_ug:po4) %>%
@@ -196,7 +213,8 @@ TPAIC <- lm(data = Paul.naomit, tp_ug ~ depth + dissolvedOxygen +
               temperature_C + tn_ug + po4)
 
 #Choose a model by AIC in a Stepwise Algorithm
-step(TPAIC)
+step(TPAIC) #step-wise with all, then take out variable one by one
+#none is the point of inflection and none of the variables should be removed after this point
 TPmodel <- lm(data = Paul.naomit, tp_ug ~ dissolvedOxygen + temperature_C + tn_ug)
 summary(TPmodel)
 
