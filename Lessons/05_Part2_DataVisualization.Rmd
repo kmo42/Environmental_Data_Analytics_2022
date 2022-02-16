@@ -36,28 +36,40 @@ PeterPaul.chem.nutrients.gathered$sampledate <- as.Date(
 ### Themes
 Often, we will want to change multiple visual aspects of a plot. Ggplot comes with pre-built themes that will adjust components of plots if you call that theme. 
 ```{r, fig.height = 3, fig.width = 4, warning = FALSE}
+#Setting theme, background colors, legend placement, text font
 O3plot <- ggplot(EPAair) +
   geom_point(aes(x = Date, y = Ozone)) 
+#original ozone by date
 print(O3plot)
 
 O3plot1 <- ggplot(EPAair) +
   geom_point(aes(x = Date, y = Ozone)) +
   theme_gray()
+#nothing happens
 print(O3plot1)
 
 O3plot2 <- ggplot(EPAair) +
   geom_point(aes(x = Date, y = Ozone)) +
   theme_bw()
+#Classic dark on white theme
 print(O3plot2)
 
 O3plot3 <- ggplot(EPAair) +
   geom_point(aes(x = Date, y = Ozone)) +
   theme_light()
+#Now have gray lines and axis
 print(O3plot3)
 
 O3plot4 <- ggplot(EPAair) +
   geom_point(aes(x = Date, y = Ozone)) +
   theme_classic()
+#similar to default with solid lines on axes
+print(O3plot4)
+
+#KO added
+O3plot4 <- ggplot(EPAair) +
+  geom_point(aes(x = Date, y = Ozone)) +
+  theme_linedraw()
 print(O3plot4)
 ```
 
@@ -72,21 +84,24 @@ If you would like to set a common theme across all plots in your analysis sessio
 ```{r, fig.height = 3, fig.width = 4, warning = FALSE}
 mytheme <- theme_classic(base_size = 14) +
   theme(axis.text = element_text(color = "black"), 
-        legend.position = "top") #alternative: legend.position + legend.justification
-
+        legend.position = "top")
+#alternative: legend.position + legend.justification=left/right alignment
 # options: call the theme in each plot or set the theme at the start. 
+    #define own theme as object,
+    #want to adjust axis color to black
+    #default legend is on right, moved to top
 
 O3plot5 <- ggplot(EPAair) +
   geom_point(aes(x = Date, y = Ozone)) +
   mytheme
 print(O3plot5)  
-
+#all black and bigger with axis than before
 theme_set(mytheme)
+#set theme for all subsequent plots
 
 O3plot6 <- ggplot(EPAair) +
   geom_point(aes(x = Date, y = Ozone))
-print(O3plot6)  
-
+print(O3plot6)
 ```
 
 ### Adjusting multiple components of your plots
@@ -95,15 +110,22 @@ While the theme allows us to set multiple aspects of plots, ggplot allows us to 
 
 ```{r, fig.height = 3, fig.width = 4, warning = FALSE}
 O3plot7 <- ggplot(EPAair, aes(x = Date, y = Ozone)) +
-  geom_hline(yintercept = 50, lty = 2) +
-  geom_hline(yintercept = 100, lty = 2) +
-  geom_point(alpha = 0.5, size = 1.5) +
-  geom_text(x = as.Date("2020-01-01"), y = 45, label = "good", hjust = 1, fontface = "bold") +   # hjust = 1 means left align
-  geom_text(x = as.Date("2020-01-01"), y = 95, label = "moderate", hjust = 1, fontface = "bold") +
-  geom_text(x = as.Date("2020-01-01"), y = 120, label = "unhealthy (sensitive groups)", hjust = 1, fontface = "bold") +
-  scale_x_date(limits = as.Date(c("2018-01-01", "2019-12-31")), 
-    date_breaks = "2 months", date_labels = "%b %y") +
-  ylab(expression("O"[3]* " AQI Value")) +
+  geom_hline(yintercept = 50, lty = 2) + #2=dashed
+  geom_hline(yintercept = 100, lty = 2) + #to define part of dataset
+  geom_point(alpha = 0.5, size = 1.5) + #alpha=transparency
+  #ozone by date, want a line crossing 
+  geom_text(x = as.Date("2020-01-01"), y = 45, label = "good", hjust = 1, fontface = "bold") +   
+  # hjust = 1 means left align, and adding text with coordinates
+  geom_text(x = as.Date("2020-01-01"), y = 95, label = "moderate", hjust = 1, fontface = "bold") + #location = date
+  geom_text(x = as.Date("2020-01-01"), y = 120, label = "unhealthy (sensitive groups)", hjust = 1, fontface = "bold") + #defining three leves
+  scale_x_date(limits = as.Date(c("2018-01-01", "2019-12-31")),
+  #setting limits with a range to show a section
+    date_breaks = "2 months", date_labels = "%b %y") + #breaks for 2 months to 
+    #month then year with short abreviations wnd 3 letters for month
+    #changed datae breaks
+  ylab(expression("O"[3]* " AQI Value")) + 
+  #wanted to have 3 subscript for special greek letter or formula writing
+  #want more informative label
   theme(axis.text.x = element_text(angle = 45,  hjust = 1))
 print(O3plot7)  
 
@@ -118,6 +140,9 @@ Color palettes are an effective way to communicate additional aspects of our dat
 * Diverging color palettes should be used for diverging values (e.g., warm-to-cool works well for values on a scale encompassing negative and positive values)
 
 Does your color palette communicate additional and necessary information? If the answer is no, then you might consider removing it and going with a single color. Common instances of superfluous or redundant color palettes include: 
+    #if color reduces conciseness of plot
+    #when trying to duplicate an axis
+    #when communicates same thing as labels
 
 * Color that duplicates an axis
 * Color that distinguishes categories when labels already exist (exception: if category colors repeat throughout a series of interrelated visualizations and help the reader build a frame of reference across a report)
@@ -160,13 +185,19 @@ library(RColorBrewer)
 library(colormap)
 
 scales::show_col(colormap(colormap = colormaps$viridis, nshades = 16))
+#purple, blue, green, yellow
 scales::show_col(colormap(colormap = colormaps$inferno, nshades = 16))
+  #black, purple, red, orange, yellow
 scales::show_col(colormap(colormap = colormaps$magma, nshades = 16))
-display.brewer.all(n = 9)
+  #black, purple, pink, light yellow
+display.brewer.all(n = 9) #names of palettes available
 
+
+##Example
 NvsP <-
   ggplot(PeterPaul.chem.nutrients, aes(x = tp_ug, y = tn_ug, color = depth, shape = lakename)) +
   geom_point() 
+    #Categorizing by depth by color, 
 print(NvsP)
 
 # let's first make the plot look better.
@@ -174,14 +205,26 @@ print(NvsP)
 # change your legend labels
 NvsP2 <-
   ggplot(PeterPaul.chem.nutrients, aes(x = tp_ug, y = tn_ug, color = depth, shape = lakename)) +
-  geom_point(alpha = 0.7, size = 2.5) +
-  #labs() + # change your legend labels here
-  scale_shape_manual(values = c(15, 17)) +
-  #scale_color_distiller(palette = "Blues", direction = 1) + # use scale_color_brewer for discrete variables
-  scale_color_viridis(option = "magma", direction = -1) +
+  geom_point(alpha = 0.7, size = 2.5) + 
+        #changing data label size
+  labs(color="Depth", shape="Lake Name") + 
+        # change your legend labels here 
+    
+  scale_shape_manual(values = c(15, 17)) + #choosing shapes 
+        #can find othe shapes also, peter = triangle
+  # scale_color_distiller(palette = "Blues", direction = 1) + 
+  # use scale_color_brewer for discrete variables
+  scale_color_viridis(option = "magma", direction = -1) + 
+        #choosing color scheme magma in viridis option
   theme(legend.position = "right", 
-        legend.text = element_text(size = 12), legend.title = element_text(size = 12))
+        legend.text = element_text(size = 12), legend.title = element_text(size = 12))  #legend on right of text, with text size 12, PAUL/PETER = elements
+        #legend title is lake name
+
 print(NvsP2)
+
+
+
+
 
 # change your y axis label to list concentration in micrograms per liter
 # remove your x axis label
@@ -202,13 +245,16 @@ print(Nutrientplot)
 
 ### Multiple plots on a page
 In situations where facets don't fill our needs to place multiple plots on a page, we can use the package `cowplot` to arrange plots. The `plot_grid` function is extremely flexible in its ability to arrange plots in specific configurations. A useful guide can be found here: https://cran.r-project.org/web/packages/cowplot/vignettes/introduction.html.
+      #helps you put multiple plots on the same page
 
 A useful guide for aligning plots by axis can be found here: https://wilkelab.org/cowplot/articles/aligning_plots.html
 
 ```{r, fig.height = 7, fig.width = 6}
-#install.packages("cowplot")
+install.packages("cowplot")
 library(cowplot)
 plot_grid(NvsP2, Nutrientplot, nrow = 2, align = 'h', rel_heights = c(1.25, 1))
+      #changes the plot grid, two plots with 2 stcked plots
+      #re_hts give mre space to on e plot, size plots with cells of diff sizes
 
 ```
 
@@ -216,12 +262,13 @@ plot_grid(NvsP2, Nutrientplot, nrow = 2, align = 'h', rel_heights = c(1.25, 1))
 The `ggsave` function allows you to save plots in jpg, png, eps, pdf, tiff, and other formats. The following information can be supplied: 
 
 * filename and relative path, with file extension and in quotes (required)
-* plot object (required)
+* plot object (required) #plot you want to display
 * width, height, units 
 * resolution (dpi)
 
 For example: 
 `ggsave("./Output/PMplot.jpg", PMplot.faceted, height = 4, width = 6, units = "in", dpi = 300)`
+      #
 
 ## Visualization challenge
 

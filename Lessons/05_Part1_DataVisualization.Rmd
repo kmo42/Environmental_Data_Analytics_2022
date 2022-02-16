@@ -47,78 +47,96 @@ ggplot has only a few rules:
 * Additional layers must be specified to fill the plot. 
 
 ### Geoms
-
+/
 Here are some commonly used layers for plotting in ggplot: 
 
-* geom_bar
+* geom_bar #bar plot, 
 * geom_histogram
 * geom_freqpoly
 * geom_boxplot
 * geom_violin
 * geom_dotplot
 * geom_density_ridges
-* geom_point #good for lab exercises
+* geom_point #good for lab exercises, scatterplot
 * geom_errorbar
-* geom_smooth
-* geom_line
+* geom_smooth #adding a trendline
+* geom_line #add trendline
 * geom_area
-* geom_abline (plus geom_hline and geom_vline)
-* geom_text
+* geom_abline (plus geom_hline and geom_vline) 
+    #add line with intercept a & slope b
+* geom_text #add text or change defaults
 
 ### Aesthetics
 Here are some commonly used aesthetic types that can be manipulated in ggplot: 
 
-* color
-* fill
-* shape
-* size
-* transparency
+* color #change the color or contour
+* fill #change the fill of bar or white
+* shape #decide the shape of pt
+* size #size of pt using
+* transparency #to points or bars
 
 ### Plotting continuous variables over time: Scatterplot and Line Plot
 
 ```{r, fig.height = 3, fig.width = 4, warning = FALSE}
+#window layout of ht 3, w=4 for any plot in the code chunk 
 # Scatterplot
-ggplot(EPAair, aes(x = Date, y = Ozone)) + 
+ggplot(EPAair, aes(x = Date, y = Ozone)) + #x and y axis, ozone made a pt
   geom_point()
 
 O3plot <- ggplot(EPAair) +
   geom_point(aes(x = Date, y = Ozone))
-print(O3plot)
+print(O3plot) #assigning layers and then with print command for objectprint multiple plots next to each other, store as an object
+#aes can be on first line or later on
 
 # Fix this code
+#changing the color
 O3plot2 <- ggplot(EPAair) +
-  #geom_point(aes(x = Date, y = Ozone, color = "blue"))
+  #geom_point(aes(x = Date, y = Ozone, color = "blue")) 
   geom_point(aes(x = Date, y = Ozone), color = "blue")
 print(O3plot2)
+        #when color is inside () the plot adds another layer to plot with first             color available chosen (orange) with a legend
+        #when outside takes it as another spec
 
-# Add additional variables
+ # Add additional variables
 # How could you automatically assign a marker color to a variable? 
 PMplot <- 
-  ggplot(EPAair, aes(x = Month, y = PM2.5, shape = as.factor(Year), color = Site.Name)) +
-  geom_point()
+  ggplot(EPAair, aes(x = Month, y = PM2.5, shape = as.factor(Year), color = Site.Name)) +  #telling r for different shapes by year, month makes columns 
+                #site.name assigned by color automatically
+  geom_point() #want points for variable, can increase window for better look
 print(PMplot)
 
 # Separate plot with facets
 PMplot.faceted <-
   ggplot(EPAair, aes(x = Month, y = PM2.5, shape = as.factor(Year))) +
   geom_point() +
-  facet_wrap(vars(Site.Name), nrow = 3)
+  facet_wrap(vars(Site.Name), nrow = 3) 
 print(PMplot.faceted)
+
+#one plot with 3 rows and 4 columns, 
+    #name added automatically to 12 month variable plots, 
+    #can see higher and lower concentrations and numbers of observations
+    #can remove sites if needed
+
 
 # Filter dataset within plot building and facet by multiple variables
 PMplot.faceted2 <- 
-  ggplot(subset(EPAair, Site.Name == "Clemmons Middle" | Site.Name == "Leggett" |
+  ggplot(subset(EPAair, Site.Name == "Clemmons Middle" | Site.Name == "Leggett" |#picking 3 sites on new df, then month on x
                   Site.Name == "Bryson City"), 
-         aes(x = Month, y = PM2.5)) + 
+         aes(x = Month, y = PM2.5)) + #Axes
   geom_point() +
-  facet_grid(Site.Name ~ Year) 
+  facet_grid(Site.Name ~ Year)   
 print(PMplot.faceted2)
+  
+#still want facets with site name by year
+      #setting year columns, and rows with 3 sites to see if pm changed from year to year
+ #matrix look with same shapes from being in diff facets
 
-# Plot true time series with geom_line
+ # Plot true time series with geom_line
 PMplot.line <- 
+  #line plot to connect points,
   ggplot(subset(EPAair, Site.Name == "Leggett"), 
-         aes(x = Date, y = PM2.5)) +
-  geom_line()
+         aes(x = Date, y = PM2.5)) + # connecting order obsv on x axis, not month
+  geom_line() #making a time series plot, and picked one site
 print(PMplot.line)
 
 
@@ -130,19 +148,21 @@ print(PMplot.line)
 ```{r, fig.height = 3, fig.width = 4, warning = FALSE}
 # Scatterplot
 lightvsDO <- 
-  ggplot(PeterPaul.chem.nutrients, aes(x = irradianceWater, y = dissolvedOxygen)) +
+  ggplot(PeterPaul.chem.nutrients, aes(x = irradianceWater, y = dissolvedOxygen)) + #two variables and relationship btwn them 
   geom_point()
 print(lightvsDO)
 
-# Adjust axes
+# Adjust axes to look at where the points are concentrated, by omitting outliers, zooming in
 lightvsDOfixed <- 
   ggplot(PeterPaul.chem.nutrients, aes(x = irradianceWater, y = dissolvedOxygen)) +
   geom_point() +
-  xlim(0, 250) +
+  xlim(0, 250) + #excluding three points
   ylim(0, 20)
 print(lightvsDOfixed)
 
 # Depth in the fields of limnology and oceanography is on a reverse scale
+#Looking at relationship btwn T and depth
+#want zero to be on top and high numbers at bottom, use scale y reverse
 tempvsdepth <- 
   ggplot(PeterPaul.chem.nutrients, aes(x = temperature_C, y = depth)) +
   #ggplot(PeterPaul.chem.nutrients, aes(x = temperature_C, y = depth, color = daynum)) +
@@ -150,11 +170,13 @@ tempvsdepth <-
   scale_y_reverse()
 print(tempvsdepth)
 
+
+
 NvsP <-
   ggplot(PeterPaul.chem.nutrients, aes(x = tp_ug, y = tn_ug, color = depth)) +
-  geom_point() +
-  geom_smooth(method = lm) +
-  geom_abline(aes(slope = 16, intercept = 0))
+  geom_point() + # looking at relationship btwn x = tp_ug, y = tn_ug, and categorizing by depth with color
+  geom_smooth(method = lm) +#adding a trendline #linear model with blue+range
+  geom_abline(aes(slope = 16, intercept = 0)) #added known line w/ sl and int
 print(NvsP)
 
 ```
@@ -163,32 +185,52 @@ print(NvsP)
 A traditional way to display summary statistics of continuous variables is a bar plot with error bars. Let's explore why this might not be the most effective way to display this type of data. Navigate to the Caveats page on Data to Viz (https://www.data-to-viz.com/caveats.html) and find the page that explores barplots and error bars. 
 
 What might be more effective ways to display the information? Navigate to the boxplots page in the Caveats section to explore further.
+#Bar plots sometimes show the same display diff trends as exactly the same, even with error bars
+#Hides things to the readers 
+#smaller sample size, boxplot with jitter is good
+#large datasets, violin plots are better with sum stats
 
 ```{r, fig.height = 3, fig.width = 4, warning = FALSE}
 # Box and whiskers plot
 Nutrientplot3 <-
-  ggplot(PeterPaul.chem.nutrients.gathered, aes(x = lakename, y = concentration)) +
+  ggplot(PeterPaul.chem.nutrients.gathered, aes(x = lakename, y = concentration)) + #gathered to look at all dataset nutrient concentration
+    #Name and nutrient columns in PETER AND PAUL LAKES ONLY
   geom_boxplot(aes(color = nutrient)) # Why didn't we use "fill"?
-print(Nutrientplot3)
+  #used nutrient as category for boxplots and colors are automatically assigned
+print(Nutrientplot3)  #great way to display, fill of shape in boxes, color=dots
+  #color= is best to change color of boxplot pts.  
 
 # Dot plot
 Nutrientplot4 <-
-  ggplot(PeterPaul.chem.nutrients.gathered, aes(x = lakename, y = concentration)) +
-  geom_dotplot(aes(color = nutrient, fill = nutrient), binaxis = "y", binwidth = 1, 
-               stackdir = "center", position = "dodge", dotsize = 2) #
-print(Nutrientplot4)
+  ggplot(PeterPaul.chem.nutrients.gathered, aes(x = lakename, y = concentration)) + #color categorizing by nutrients, and now useing dotplot(no Boxes) and categorzing with color by nutrient
+  geom_dotplot(aes(color = nutrient, fill = nutrient (), binaxis = "y" 
+               stackdir = "center", position = "dodge", dotsize = 2) 
+print(Nutrientplot4) 
+  #binaxis y = stacking on y axis 
+  #filling category with color based on nutrients) 
+  ##now can see something about 2nd/3rd colors,, binwidth = 1,  
+  #stacking points on center position
+  #dodge, no overlaying dots, wider =more observations at that value
+#dotsize is chosen to be 2
+#tn_ug is spread out, and yellow/green are more concentrated on values closer to zero
+#recognize the ranges for diff nutrients vary, and could look concentrated, when really that could just be from the size of the y-axis
 
-# Violin plot
+
+## Violin plot
 Nutrientplot5 <-
-  ggplot(PeterPaul.chem.nutrients.gathered, aes(x = lakename, y = concentration)) +
-  geom_violin(aes(color = nutrient)) #
+  ggplot(PeterPaul.chem.nutrients.gathered, aes(x = lakename, y = concentration)) + #nutrietns categorized by color
+  geom_violin(aes(color = nutrient)) #densities reflected by degree of width
 print(Nutrientplot5)
 
 # Frequency polygons
 # Using a tidy dataset
 Nutrientplot6 <-
   ggplot(PeterPaul.chem.nutrients) +
-  geom_freqpoly(aes(x = tn_ug), color = "darkred") +
+  geom_freqpoly(aes(x = tn_ug), color = "darkred") + 
+    #freqency plot with specified colors
+    #need a legend with colors
+    #need x-axis legend
+  #inefficient
   geom_freqpoly(aes(x = tp_ug), color = "darkblue") +
   geom_freqpoly(aes(x = nh34), color = "blue") +
   geom_freqpoly(aes(x = no23), color = "royalblue") +
@@ -199,6 +241,9 @@ print(Nutrientplot6)
 Nutrientplot7 <-   
   ggplot(PeterPaul.chem.nutrients.gathered) +
   geom_freqpoly(aes(x = concentration, color = nutrient))
+    #gathered data with nutirients with once concen, 
+    #add one geom, and categorize by color inside the aeshtetics 
+    #much cleaner 
 print(Nutrientplot7)
 
 # Frequency polygons have the risk of becoming spaghetti plots. 
@@ -207,7 +252,11 @@ print(Nutrientplot7)
 # Ridgeline plot
 Nutrientplot6 <-
   ggplot(PeterPaul.chem.nutrients.gathered, aes(y = nutrient, x = concentration)) +
-  geom_density_ridges(aes(fill = lakename), alpha = 0.5) #
+  geom_density_ridges(aes(fill = lakename), alpha = 0.5) 
+    #shows density of data over time, with nutrients /concentration
+    #used gathered dataset
+    #categorize by nutrient, fill below the line of the curves 
+    #each nutrient has it's own line
 print(Nutrientplot6)
 
 
