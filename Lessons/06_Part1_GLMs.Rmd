@@ -35,10 +35,12 @@ The analysis of variance (ANOVA), and linear regression are special cases of the
 
 **One-way ANOVA (Analysis of Variance):** Continuous response, one categorical explanatory variable with more than two categories. 
 >for comparing means, expl variables on the right side
+>
 
 **Two-way ANOVA (Analysis of Variance)** Continuous response, two categorical explanatory variables.
 
 **Single Linear Regression** Continuous response, one continuous explanatory variable.
+>lm function will give an output but need to understand if a good lin regr or not
 
 **Multiple Linear Regression** Continuous response, two or more continuous explanatory variables.
 
@@ -64,14 +66,18 @@ PeterPaul.chem.nutrients <- read.csv("./Data/Processed/NTL-LTER_Lake_Chemistry_N
 mytheme <- theme_classic(base_size = 14) +
   theme(axis.text = element_text(color = "black"), 
         legend.position = "top")
+
 theme_set(mytheme)
 ```
 
 ## Linear Regression
 A linear regression is comprised of a continuous response variable, plus a combination of 1+ continuous response variables (plus the error term). The deterministic portion of the equation describes the response variable as lying on a straight line, with an intercept and a slope term. The equation is thus a typical algebraic expression: 
 $$ y = \alpha + \beta*x + \epsilon $$
+>ppl in lab one shirley, catherine o. erin, stephanie, erin, karen, 
 
 The goal for the linear regression is to find a **line of best fit**, which is the line drawn through the bivariate space that minimizes the total distance of points from the line. This is also called a "least squares" regression. The remainder of the variance not explained by the model is called the **residual error.** 
+>want residual series to look symetric with normal distr with mean of zero, always chaeck the residuals
+
 
 The linear regression will test the null hypotheses that
 
@@ -81,6 +87,15 @@ The linear regression will test the null hypotheses that
 Whether or not we care about the result of each of these tested hypotheses will depend on our research question. Sometimes, the test for the intercept will be of interest, and sometimes it will not.
 
 Important components of the linear regression are the correlation and the R-squared value. The **correlation** is a number between -1 and 1, describing the relationship between the variables. Correlations close to -1 represent strong negative correlations, correlations close to zero represent weak correlations, and correlations close to 1 represent strong positive correlations. The **R-squared value** is the correlation squared, becoming a number between 0 and 1. The R-squared value describes the percent of variance accounted for by the explanatory variables. 
+>how much of the variability of the series is explained by the explan variables, closer to 1 is better, low rsq 0.20, high rsq = looking at residual series
+>Pvalue= tells the signif of regression with each coeff tells the difference from zero (zero is bad) and an overall pvalue to be small=good
+
+>if one thing fails? rsq fails? look at more variables. The more variables I add, which adds complexity, and should be worth it to add them, not willy nilly
+
+>ways to add new variables (testing for corr between variables) with correlation analysis with matrix for y trying to estimate
+>the interraction factor; vid 2, maybe if x2 is too corr to x1 then adding x2 won't help much, matrix shows corr among all the variables (ex: this x8 is highly corr with y and x3)
+
+>ways to add new variables 2: step wise algorithm, check diff combos with all, then taking one out at a time; uses AIC is the output metric to see which Lin Regr is best, model selection. Once have all the variables, no need for AIC
 
 ## Simple Linear Regression
 
@@ -197,6 +212,7 @@ PeterPaulCorr <- cor(PeterPaulnutrients)
 corrplot(PeterPaulCorr, method = "ellipse")
 corrplot.mixed(PeterPaulCorr, upper = "ellipse")
 ```
+>anything above 0.6 means it is good to add to model but if AIC doesn't improve could be overfitting with two variables acting the same. 
 
 ## AIC to select variables
 
@@ -219,3 +235,8 @@ TPmodel <- lm(data = Paul.naomit, tp_ug ~ dissolvedOxygen + temperature_C + tn_u
 summary(TPmodel)
 
 ```
+
+>when AIC goes down then the new AIC value per variable , then can remove that variables. if AIC increaes, then keep that variable in linear regression. biggest improvement was by removing first one. So take it out and run the AIC again, repeat it until the first output line is none
+>first removing one by one, which led to biggest improvement and re-run without the bad variable, then repeat
+>only call step function, and will stop 
+>don't want two variables with two 
