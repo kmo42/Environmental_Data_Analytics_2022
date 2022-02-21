@@ -140,6 +140,7 @@ plot(O3.twosample2)
 
 **Two-sample t-test:**  check if mean of two samples is equivalent
 >comparing mean on two levels
+>running one way Anova, with more than one level with two-sample t test
 
 ### Visualization and interpretation challenge
 
@@ -155,7 +156,7 @@ Create three plots, each with appropriately formatted axes and legends. Choose a
 #make interger year into as.factor
 #add transparency with alpha function
 #scale maual fill"
-#labs (x = ozomne and y  = 
+#labs (x = ozone and y  = 
 #Overdlay, when choose dark colors they become light
 #why chose fill which is better, if you use color, only applies to line,
 #if shoooser ffill to change color under the curve 
@@ -173,10 +174,12 @@ For the NTL-LTER dataset, can we predict PM2.5 from Ozone?
 #Exercise 3: Run a linear regression PM2.5 by Ozone. Find the p-value and R-squared value. 
 
 #boxplot with x = year with as.factor, y = ozone
-#add letters with stat_summary (geom = "text", fun.y=max) for funcion of where to place the text (which max equals maximum; 
-#vjustmeans vertianckl boxlots 
+#add letters with stat_summary (geom = "text", fun.y=max) for function of where to place the text (which max equals maximum; 
+#vjust means vertianckl boxlots 
 #labs(x="", y= ")
-#adfust limits to be able to see label a with ylim
+#adjust limits to be able to see label a with ylim
+
+
 
 
 #Exercise with violinn
@@ -190,7 +193,8 @@ For the NTL-LTER dataset, can we predict PM2.5 from Ozone?
 
 
 ```
-
+>Ends in low p-value which is good; 
+>low rsq bc points are all over the place bc missing some variables
 
 ## AIC to select variables
 
@@ -199,6 +203,15 @@ What other variables can we add to improve model?
 ```{r}
 
 #Exercise 5: Build correlation plots and identify more possible explanatory variables to add to the regression.
+#month, year, lat, long
+library(dplyr)
+EPAair.subset <-
+  EPAair %>%
+  select(meanLat:PM2.5) %>%
+  na.omit
+
+EPAairCorr <- cor(EPAair.subset)
+corrplot(EPAair)
 
 
 

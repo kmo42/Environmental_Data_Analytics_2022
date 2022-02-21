@@ -8,6 +8,8 @@ editor_options:
   chunk_output_type: console
 ---
 >Linear regression and variable selection
+>ppl in lab one shirley, catherine o., erin?, stephanie, erin, karen, shana, maggie, laurel, jeff, cassidy, blair, Taro, Josh, Lambert
+Wednesday section: meilin
 
 ## Objectives
 1. Describe the components of the generalized linear model (GLM)
@@ -35,7 +37,6 @@ The analysis of variance (ANOVA), and linear regression are special cases of the
 
 **One-way ANOVA (Analysis of Variance):** Continuous response, one categorical explanatory variable with more than two categories. 
 >for comparing means, expl variables on the right side
->
 
 **Two-way ANOVA (Analysis of Variance)** Continuous response, two categorical explanatory variables.
 
@@ -73,7 +74,7 @@ theme_set(mytheme)
 ## Linear Regression
 A linear regression is comprised of a continuous response variable, plus a combination of 1+ continuous response variables (plus the error term). The deterministic portion of the equation describes the response variable as lying on a straight line, with an intercept and a slope term. The equation is thus a typical algebraic expression: 
 $$ y = \alpha + \beta*x + \epsilon $$
->ppl in lab one shirley, catherine o. erin, stephanie, erin, karen, 
+
 
 The goal for the linear regression is to find a **line of best fit**, which is the line drawn through the bivariate space that minimizes the total distance of points from the line. This is also called a "least squares" regression. The remainder of the variance not explained by the model is called the **residual error.** 
 >want residual series to look symetric with normal distr with mean of zero, always chaeck the residuals
