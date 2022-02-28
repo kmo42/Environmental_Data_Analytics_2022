@@ -122,6 +122,7 @@ print(Litter.Totals.plot) #clusters are comparable, if a letter shows up without
 >ideally run Shapiro test, and make sure are on normal distr
 >Shapiro test didn't have enough observations bc not enough data
 >the first level will get letter a, default is letter abcd
+>A site with 4 or 5 letters could be associated with different groups
 
 What information does the output give us? How might we report this information in a report?
 
@@ -186,3 +187,10 @@ print(Litter.anova.plot)
 
 ```
 
+>Questions: Monday in lab
+>correlation, strength of relationship and type of correlation +/-, close to 0 is weak corr, + = increase or decrease together, - = opposite signs
+>Auto-corr: how series is related to yt to yt-1, lagged observations of same variable, take column from data frame, then lag column by 1, again new column to lag by 2, and compare to og column
+>partial auto-corr: relationship between y and yt-2, gives the relationship when the influence of intermediate operations, time dependence of 
+>why take trend out? make a good representation of it for future projections, don't remove trend, but rather identify it; can add trend back later with models that can't take a trend in the beginning
+>Identify trend with seasonal component, need a model that can represent the seasonality
+>whatever happened in the past will happen in the future, good for electricity use and prices, making a decision with a fleet of power generation with supplu demand, to schedule power plants
