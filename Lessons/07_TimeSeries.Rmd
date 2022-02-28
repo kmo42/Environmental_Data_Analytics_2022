@@ -8,6 +8,8 @@ editor_options:
   chunk_output_type: console
 ---
 
+>Ben in class has taken time series analysis
+
 ## Objectives
 1. Discuss the purpose and application of time series analysis for environmental data
 2. Explore the components of times series: trend, seasonal, random
@@ -16,6 +18,14 @@ editor_options:
 ## Set up
 
 Today we will work with two datasets. The USGS dataset on discharge at the Eno River and a new dataset we haven't explored yet on wind speed. The data file is available at "./Data/Raw/Wind_Speed_PortArthurTX.csv". It contains average wind speed in monthly time steps (elevation = 5 meters). The data is available from NOAA National Centers for Environmental Information (NCEI) [here][https://www.ncdc.noaa.gov/cdo-web/datasets#GSOM].
+
+>Questions: Monday in lab
+>correlation, strength of relationship and type of correlation +/-, close to 0 is weak corr, + = increase or decrease together, - = opposite signs
+>Auto-corr: how series is related to yt to yt-1, lagged observations of same variable, take column from data frame, then lag column by 1, again new column to lag by 2, and compare to og column
+>partial auto-corr: relationship between y and yt-2, gives the relationship when the influence of intermediate operations, time dependence of 
+>why take trend out? make a good representation of it for future projections, don't remove trend, but rather identify it; can add trend back later with models that can't take a trend in the beginning
+>Identify trend with seasonal component, need a model that can represent the seasonality
+>whatever happened in the past will happen in the future, good for electricity use and prices, making a decision with a fleet of power generation with supplu demand, to schedule power plants
 
 ```{r, message = FALSE}
 
@@ -77,9 +87,7 @@ River discharge is measured daily at the Eno River gage station. Since we are wo
 Let's look at what the dataset contains for mean daily discharge.
 
 ```{r}
-ggplot(EnoDischarge, aes(x = datetime, y = discharge.mean)) +
-  geom_line() +
-  labs(x = "", y = expression("Discharge (ft"^3*"/s)"))
+
 ```
 
 Notice there are missing data from 1971 to 1985. Gaps this large are generally an issue for time series analysis, as we don't have a continuous record of data or a good way to characterize any variability that happened over those years. We will illustrate a few workarounds to address these issues. 
@@ -204,10 +212,13 @@ Specific tests for monotonic trend analysis are listed below, with assumptions a
 * **Seasonal Mann-Kendall**: seasonality, non-parametric `SeasonalMannKendall` (package: Kendall)
 * **Spearman Rho**: no seasonality, non-parametric, missing data allowed. Function: `cor.test(method="spearman")` (package: stats)
 
+
+
 Specific test for stochastic trend analysis:
 
 * **Augmented Dickey Fuller**: no seasonality, non-parametric, missing data not allowed. Function: `adf.test()` (package: tseries)
 
+>stochastic trend vs deterministic trend, Stochastic: trend that changes over time; deterministic: constant over time
 
 #### Example: monotonic trend analysis
 
@@ -259,6 +270,10 @@ What would we conclude based on these findings?
 
 
 ## Forecasting with Autoregressive and Moving Average Models (ARMA)
+
+>If at any moment, need some forecasts, the ARMA are the simplest version to find functions to apply to already composed datasets
+
+
 
 We might be interested in characterizing a time series in order to understand what happened in the past and to effectively forecast into the future. Two common models that can approximate time series are **autoregressive** and **moving average** models. To classify these models, we use the  **ACF (autocorrelation function)** and the **PACF (partial autocorrelation function)**, which correspond to the autocorrelation of a series and the correlation of the residuals, respectively. 
 

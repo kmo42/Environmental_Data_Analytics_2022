@@ -40,6 +40,7 @@ theme_set(mytheme)
 Today we will work with data from the Climate Change Knowledge Portal from the World Bank Group. More specifically historical rainfall and temperature averages for Brazil. You will find two new data files on folder "/Data/Raw/". One with rainfall named "pr_1901_2016_BRA.csv" and another with temperature named "tas_1901_2016_BRA.csv". The data span the period from 1901 to 2016 in monthly steps. You can download the data [here][https://climateknowledgeportal.worldbank.org/download-data]
 
 Research question: Can you see any changes on the rainfall regime or average temperature over time?
+>questions related to trends, and look exactly at trend components 
 
 ```{r}
 #Exercise 1: Import both datasets using the read.csv function.
@@ -64,13 +65,23 @@ Rainfall_BR_processed <-
 Temp_BR_processed <-
   Temp_BR %>% 
   rename( Temperature_C = Temperature....Celsius.) %>% 
-  separate(Statistics,c("Null","Month","Null2")," ") %>% 
-  mutate( Date = my(paste0(Month,"-",Year))) %>% 
+  separate(Statistics,c("Null","Month","Null2")," ") %>% #last quotes add separator space 
+  mutate( Date = my(paste0(Month,"-",Year))) %>%  #paste0 pastes all the elements together
   select(Date,Temperature_C)  
+
+
+######my function reads in as.date function; take stats column and split in 2 with separate function to get month on own, 
+#####text to column function in excel; manually place errors, 
+###sep stats and add space to get 
+###then mutate month and 
+###null = column not going to use to represent  space and average
+
 
 
 #Exercise 4: Join the temperature and rainfall into one tidy data frame with 3 columns: Date, Rainfall and Temperature.
 BRA_complete <- inner_join(Rainfall_BR_processed,Temp_BR_processed)
+####inner join function makes the data and removes gaps with creating vector with 
+###some datasets omitted rows for dates with NA
   
            
 ```
@@ -80,17 +91,26 @@ BRA_complete <- inner_join(Rainfall_BR_processed,Temp_BR_processed)
 
 ```{r}
 
-#Exercise 5: Check if there is any missing data for both temperature and rainfall series.
+#Exercise 5: Check if there is any missing data for both temperature and rainfall series. ###plot and look for NAs 
+
+summary(BRA_complete$Temperature_C)
+
+summary(BRA_complete$Rainfall)
+##sum function shows if data is equally spaced, number of rows, use summary and verify no nAs
 
 
 
+#Exercise 6: Plot both series over time on separate plots. Add a trend line using geom_smooth(). Can you say something about the trend just by visualizing the data? ###add trendline
 
-#Exercise 6: Plot both series over time on separate plots. Add a trend line using geom_smooth(). Can you say something about the trend just by visualizing the data?
+ggplot(BRA_complete, aes(x = Date, y = Rainfall)) +
+  geom_line() +
+  geom_smooth(method="lm")
+###constant over time
 
-
-
-
-
+ggplot(BRA_complete, aes(x = Date, y = Temperature_C)) +
+  geom_line() +
+  geom_smooth(method="lm")
+ ###temp is increasing over time
 
 ```
 
@@ -98,8 +118,13 @@ BRA_complete <- inner_join(Rainfall_BR_processed,Temp_BR_processed)
 
 ```{r}
 #Exercise 7: Create a time series objects for each series using ts(). Make sure you specify the starting point and frequency.
+###make sure pointing out column to ts function, if do more than one column at a time, have to keep track of which vector is which
 
+fmonth <- month(first(BRA_complete$Date))
+fyear <- year(first(BRA_complete$Date))
 
+BRA_R_ts <- ts(BRA_complete$Rainfall, start = c(fmonth,fmonth), frequency = 12)
+BRA_T_ts <- ts(BRA_complete$Temperature_C, start = c(fmonth,fmonth), frequency = 12) #frequency tells the seasonal part of the dataset, repeat every 12 observations to show new year, monthly data = 12, daily data= 365
 
 ```
 
@@ -120,21 +145,22 @@ The `stl` function decomposes the time series object into its component parts. W
 
 # Exercise 8: Use the stl() function to decompose both series. 
 # Visualize the decomposed series using plot(). What components can you identify?
+###decompose into three diff and all added together equal the original
 
-
+BR_decomp
 
 
 
 
 # Exercise 9: Use the times series object generated with the stl() to extract the 
-# components of each series and turn them into data frames.
+# components of each series and turn them into data frames. (in lesson)
 
 
 
 
 
 
-# Exercise 10: Visualize how the trend maps onto the data for both series
+# Exercise 10: Visualize how the trend maps onto the data for both series (add the trend component and seasonal component)
 
 
 

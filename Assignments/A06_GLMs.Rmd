@@ -7,6 +7,7 @@ editor_options:
   chunk_output_type: console
 ---
 
+
 ## OVERVIEW
 
 This exercise accompanies the lessons in Environmental Data Analytics on generalized linear models. 
@@ -28,7 +29,9 @@ The completed exercise is due on Monday, February 28 at 7:00 pm.
 
 #1
 ```{r, message = FALSE}
+setwd("C:/Users/Katherine/Documents/872-Data Analytics/Environmental_Data_Analytics_2022")
 getwd()
+
 library(tidyverse)
 #install.packages("agricolae")
 library(agricolae) 
@@ -36,7 +39,8 @@ library(agricolae)
 library(htmltools)
 library(lubridate)
 
-Lake <- read.csv("./Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv", stringsAsFactors = TRUE)
+Lake <- read.csv("./Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv",
+                 stringsAsFactors = TRUE)
 
 # Set date to date format
 Lake$sampledate <- as.Date(Lake$sampledate , format = "%m/%d/%y")
@@ -146,13 +150,17 @@ summary(MultRegrM_JLake)
 
 ```{r anova.model}
 #12
+JLake_anova <- aov(data = JLake, temperature_C ~ lakename)
+summary(JLake_anova)
 
-
+JLake_anova_lm <- lm(data = JLake, temperature_C ~ lakename)
+summary(JLake_anova_lm)
 ```
 
 13. Is there a significant difference in mean temperature among the lakes? Report your findings. 
 
-> Answer: 
+
+> Answer: If the p-values are greater than 0.05 then no there is not a significant difference, in support of the null (same means). For the aov model , the intercept is 21.96 with a small p-value less than 0.05 meaning there is a significant difference. For the linear model, the intercept is 21.96 with a small p-value less than 0.05 meaning there is a significant difference.  
 
 
 
@@ -160,26 +168,40 @@ summary(MultRegrM_JLake)
 
 ```{r scatterplot.2}
 #14.
+T_by_d_lakes <- 
+  ggplot(JLake, aes(x = depth, y = temperature_C, color = lakename)) +
 
+  geom_point(alpha = 0.4, size = 2.5) +
+  geom_smooth(method = lm, se = FALSE) + #adding a trendline
+  ggtitle("July LAKES Temp by Depth") + # for the main title
+  xlab("Temperature") +
+  ylab("Depth") +
+  ylim(0, 35)  #setting limits
 
+print(T_by_d_lakes)
 ```
 
 15. Use the Tukey's HSD test to determine which lakes have different means.
 
+
 ```{r tukey.test}
 #15
+TukeyHSD(JLake_anova) 
 
+JLake_aov_groups <- HSD.test(JLake_anova, "lakename", group = TRUE)
+#compare means on 2x2 basis
+JLake_aov_groups
 
 ```
 
 16.From the findings above, which lakes have the same mean temperature, statistically speaking, as Peter Lake? Does any lake have a mean temperature that is statistically distinct from all the other lakes?
 
->Answer:
+>Answer: The lake that has the same mean temperature as Peter lake is Paul Lake because they are both in the same C group. However it shows that all the group letters for the lakes have some type of overlap with another letter, meaning there is not any lake with a statistically distinct mean. If there were then there would be a group letter that is alone and has no overlap with any of the other letter groups. 
 
  
 
 17. If we were just looking at Peter Lake and Paul Lake. What's another test we might explore to see whether they have distinct mean temperatures? 
 
->Answer: 
+>Answer: Paired-sample tests and independent-sample tests are both good options.
 
 
