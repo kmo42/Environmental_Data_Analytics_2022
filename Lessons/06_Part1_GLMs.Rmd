@@ -203,7 +203,7 @@ par(mfrow = c(1,1))
 We can also make exploratory plots of several continuous data points to determine possible relationships, as well as covariance among explanatory variables. 
 
 ```{r, fig.height = 3, fig.width = 4}
-#install.packages("corrplot")
+install.packages("corrplot")
 library(corrplot) #nice visualization to see which candidates are best in regression, then step function for AIC
 PeterPaulnutrients <- 
   PeterPaul.chem.nutrients %>%
@@ -220,6 +220,7 @@ corrplot.mixed(PeterPaulCorr, upper = "ellipse")
 However, it is possible to over-parameterize a linear model. Adding additional explanatory variables takes away degrees of freedom, and if explanatory variables co-vary the interpretation can become overly complicated. Remember, an ideal statistical model balances simplicity and explanatory power! To help with this tradeoff, we can use the **Akaike's Information Criterion (AIC)** to compute a stepwise regression that either adds explanatory variables from the bottom up or removes explanatory variables from a full set of suggested options. The smaller the AIC value, the better. 
 
 Let's say we want to know which explanatory variables will allow us to best predict total phosphorus concentrations. Potential explanatory variables from the dataset could include depth, dissolved oxygen, temperature, PAR, total N concentration, and phosphate concentration.
+>smaller AIC is better
 
 ```{r}
 Paul.naomit <- PeterPaul.chem.nutrients %>%
@@ -241,3 +242,4 @@ summary(TPmodel)
 >first removing one by one, which led to biggest improvement and re-run without the bad variable, then repeat
 >only call step function, and will stop 
 >don't want two variables with two 
+

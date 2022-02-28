@@ -13,7 +13,7 @@ editor_options:
 2. Answer questions on M6 - GLMs
 3. Additional comments on videos - t-test
 4. Practice more application GLM to real datasets
-
+>A06:#5 (Mutate function to make a new column, and then filter for month code, 7 for july), 9728 observations with no NAS
 
 ## Set up
 ```{r, message = FALSE}

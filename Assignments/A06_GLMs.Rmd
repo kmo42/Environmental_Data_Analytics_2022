@@ -1,6 +1,6 @@
 ---
 title: "Assignment 6: GLMs (Linear Regressios, ANOVA, & t-tests)"
-author: "Student Name"
+author: "Katherine Owens"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -25,22 +25,42 @@ The completed exercise is due on Monday, February 28 at 7:00 pm.
 
 2. Build a ggplot theme and set it as your default theme.
 
-```{r setup}
+
 #1
+```{r, message = FALSE}
+getwd()
+library(tidyverse)
+#install.packages("agricolae")
+library(agricolae) 
+#install.packages(htmltools)
+library(htmltools)
+library(lubridate)
+
+Lake <- read.csv("./Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv", stringsAsFactors = TRUE)
+
+# Set date to date format
+Lake$sampledate <- as.Date(Lake$sampledate , format = "%m/%d/%y")
+
+```
 
 
 #2
-
-
+```{r}
+# Set theme
+mytheme <- theme_classic(base_size = 12) +
+  theme(axis.text = element_text(color = "blue"), 
+        legend.position = "bottom")
+theme_set(mytheme)
 ```
+
 
 ## Simple regression
 Our first research question is: Does mean lake temperature recorded during July change with depth across all lakes?
 
 3. State the null and alternative hypotheses for this question:
 > Answer:
-H0: 
-Ha: 
+H0: No the lake temperature does not change with depth across all lakes.
+Ha: Yes the lake temperature will change (in some way) with depthe across all lakes. 
 
 
 4.  Wrangle your NTL-LTER dataset with a pipe function so that the records meet the following criteria: 
@@ -52,32 +72,46 @@ Ha:
 
 ```{r scatterplot}
 #4
+JLake <- Lake %>%
+  mutate(month = month(sampledate)) %>%
+  filter(month == 7) %>%
+  select(lakename, year4, daynum, depth, temperature_C)%>%
+ na.omit(Lake)
 
+#5 
+T_by_d <- 
+  ggplot(JLake, aes(x = depth, y = temperature_C)) +
+  ylim(0, 35) + #setting limits
+  geom_point() +
+  geom_smooth(method = lm, color = "purple") + #adding a trendline
+  ggtitle("July Lake Temp by Depth") + # for the main title
+  xlab("Temperature") +
+  ylab("Depth") 
 
-#5
-
-
+print(T_by_d) 
 ```
 
 
 6. Interpret the figure. What does it suggest with regards to the response of temperature to depth? Do the distribution of points suggest about anything about the linearity of this trend?
 
-> Answer: 
-
+> Answer: Given the distribution of the temperature values, we do not have a linear relationship between x and y in this case. 
 
 7. Perform a linear regression to test the relationship and display the results
 
 ```{r linear.regression}
 #7
+T_by_d.regression <- lm(data = JLake, temperature_C ~ depth)
+summary(T_by_d.regression)
 
-
+# another way to format the lm() function
+irradiance.regression <- lm(data = JLake, temperature_C ~ depth)
+summary(irradiance.regression)
 ```
 
 
 8. Interpret your model results in words. Include how much of the variability in temperature is explained by changes in depth, the degrees of freedom on which this finding is based, and the statistical significance of the result. Also mention how much temperature is predicted to change for every 1m change in depth. 
 
-> Answer:
-
+> Answer: The slope of the temperature by depth plot has a negative value of 1.95 with a y-intercept of 21.96, both of which are not zero providing evidence to reject the null hypothesis.This means that for every 1m change in depth there is a 1.96 degree celcius change with the deeper the water the colder the temperatures. There are 9726 degrees of freedom, 73% of the variability in temperature is explained by changes in depth.  Also, because the p-value of the linear regression is less than 0.05 with a value of <2.2e-16 the linear model is statistically significant. 
 
 ---
 
@@ -91,18 +125,18 @@ Let's tackle a similar question from a different approach. Here, we want to expl
 
 ```{r temperature.model}
 #9
-
-
+JLake_AIC <- lm(data = JLake, temperature_C ~ depth + daynum + year4)
+step(JLake_AIC) 
 
 #10
-
+MultRegrM_JLake <- lm(data = JLake, temperature_C ~ depth + daynum + year4)
+summary(MultRegrM_JLake)
 
 ```
 
 11. What is the final set of explanatory variables that the AIC method suggests we use to predict temperature in our multiple regression? How much of the observed variance does this model explain? Is this an improvement over the model using only depth as the explanatory variable?
 
-> Answer: 
-
+> Answer: The AIC method resulted in all three variables of year4, daynum, and depth being included in the final set because the <none> showed up on the top without any of them being removed. 74% of the observed variance is explained by this model, which does demonstrate an improvement from only using depth as an explanatory variable because the r-squared value increased from 73% to 74%.
 
 
 ---
