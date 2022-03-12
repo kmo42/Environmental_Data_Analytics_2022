@@ -1,6 +1,6 @@
 ---
 title: "Assignment 7: Time Series Analysis"
-author: "Student Name"
+author: "Katherine Owens"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -29,6 +29,24 @@ The completed exercise is due on Monday, March 14 at 7:00 pm.
 
 ```{r}
 #1
+setwd("C:/Users/Katherine/Documents/872-Data Analytics/Environmental_Data_Analytics_2022")
+getwd()
+
+#install.packages("trend")
+library(trend)
+#install.packages("zoo")
+library(zoo)
+#install.packages("Kendall")
+library(Kendall)
+#install.packages("tseries")
+library(tseries)
+library(lubridate)
+library(tidyverse)
+
+mytheme <- theme_classic(base_size = 12) +
+  theme(axis.text = element_text(color = "purple"), 
+        legend.position = "bottom")
+theme_set(mytheme)
 
 ```
 
@@ -37,6 +55,34 @@ The completed exercise is due on Monday, March 14 at 7:00 pm.
 
 ```{r, message = FALSE}
 #2
+#Read Ozone-NC data
+O3_10 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2010_raw.csv",stringsAsFactors = TRUE)
+
+O3_11 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2011_raw.csv",stringsAsFactors = TRUE)
+
+O3_12 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2012_raw.csv",stringsAsFactors = TRUE)
+
+O3_13 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2013_raw.csv",stringsAsFactors = TRUE)
+
+O3_14 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2014_raw.csv",stringsAsFactors = TRUE)
+
+O3_15 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2015_raw.csv",stringsAsFactors = TRUE)
+
+O3_16 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2016_raw.csv",stringsAsFactors = TRUE)
+
+O3_17 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2017_raw.csv",stringsAsFactors = TRUE)
+
+O3_18 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2018_raw.csv",stringsAsFactors = TRUE)
+
+O3_19 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2019_raw.csv",stringsAsFactors = TRUE)
+
+
+myfulldata <- merge(O3_10, O3_11, O3_12, O3_13, O3_14, O3_15, O3_16, O3_17, O3_18, O3_19)
+
+
+
+EnoDischarge$datetime <- as.Date(EnoDischarge$datetime, format = "%Y-%m-%d")
+
 
 
 ```
