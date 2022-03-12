@@ -67,6 +67,7 @@ shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_063"])
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_064"])
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_067"])
 #shapiro test: work with what we have, ideally want normal distr to apply anova method
+##over .05 p value means follows a normal distr and do not reject the null, mening variables are not equal 
 
 
 #results: reject null in all except two: NIWO_057 and NIWO_046
@@ -83,12 +84,16 @@ bartlett.test(Litter.Totals$dryMass ~ Litter.Totals$plotID)
 Litter.Totals.anova <- aov(data = Litter.Totals, dryMass ~ plotID)
 summary(Litter.Totals.anova)
 
-#results: reject null hypothesis i.e. difference between a pair of group means is statiscally significant
+#results: reject null hypothesis if p value is less than 0.05 meaning the means are not all the same
+#i.e. difference between a pair of group means is statiscally significant
+
+
 
 # Format ANOVA as lm
 Litter.Totals.anova2 <- lm(data = Litter.Totals, dryMass ~ plotID)
 summary(Litter.Totals.anova2)
-
+###summary from aov is classic, lm has a row per variable all based on intercept term
+ 
 
 
 # Checking model fit and assumptions
@@ -96,7 +101,7 @@ summary(Litter.Totals.anova2)
 plot(Litter.Totals.anova2)
   #when lookingat results, the means migh tbe diff, but won't be told which are the same? use post-hoc test
 
-# Post-hoc test
+# Post-hoc test: tells us which mean pairs are different 
 # TukeyHSD() computes Tukey Honest Significant Differences
 TukeyHSD(Litter.Totals.anova) 
 
