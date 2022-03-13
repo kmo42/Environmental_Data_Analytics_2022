@@ -42,7 +42,9 @@ library(Kendall)
 library(tseries)
 library(lubridate)
 library(tidyverse)
+library(dplyr)
 
+#set ggplot theme
 mytheme <- theme_classic(base_size = 12) +
   theme(axis.text = element_text(color = "purple"), 
         legend.position = "bottom")
@@ -52,6 +54,9 @@ theme_set(mytheme)
 
 
 2. Import the ten datasets from the Ozone_TimeSeries folder in the Raw data folder. These contain ozone concentrations at Garinger High School in North Carolina from 2010-2019 (the EPA air database only allows downloads for one year at a time). Import these either individually or in bulk and then combine them into a single dataframe named `GaringerOzone` of 3589 observation and 20 variables. 
+
+>Question:how to do this all at one time?
+>Question:When making large df, am I making a df or a list with rbind? rbind makes a matrix
 
 ```{r, message = FALSE}
 #2
@@ -76,15 +81,11 @@ O3_18 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2018_raw.csv"
 
 O3_19 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2019_raw.csv",stringsAsFactors = TRUE)
 
+#Combine into aggregated df
+GaringerOzone <- rbind(O3_10, O3_11, O3_12, O3_13, O3_14, O3_15, O3_16, O3_17, O3_18, O3_19)
 
-myfulldata <- merge(O3_10, O3_11, O3_12, O3_13, O3_14, O3_15, O3_16, O3_17, O3_18, O3_19)
-
-
-
-EnoDischarge$datetime <- as.Date(EnoDischarge$datetime, format = "%Y-%m-%d")
-
-
-
+#to check is a df
+is.data.frame(GaringerOzone)
 ```
 
 ## Wrangle
@@ -99,13 +100,27 @@ EnoDischarge$datetime <- as.Date(EnoDischarge$datetime, format = "%Y-%m-%d")
 
 ```{r}
 # 3
+#Format Date
+GaringerOzone$Date <- as.Date(GaringerOzone$Date, format = '%m/%d/%Y')
 
 # 4
+#Make df with only columns Date, Daily.Max.8.hour.Ozone.Concentration, and DAILY_AQI_VALUE. 
+GOZ_3 <- select(GaringerOzone, Date, Daily.Max.8.hour.Ozone.Concentration, DAILY_AQI_VALUE)
 
 # 5
+#create new daily df with all days from '10-'19
+?seq.Date
+Days <- as.data.frame(seq(as.Date("2010-01-01"), as.Date("2019-12-31"), "day"))
+
+#rename single column in Days to Date
+colnames(Days) <- c("Date")
 
 # 6
-
+#combine df with missing days with daily df
+GaringerOzone <-
+  left_join(
+  Days,
+  GOZ_3)
 ```
 
 ## Visualize

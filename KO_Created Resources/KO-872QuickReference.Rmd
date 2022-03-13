@@ -1,0 +1,180 @@
+---
+title: "KO-872QuickReference"
+author: "Katherine Owens"
+date: "3/13/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+##Combine Files
+>found in 02
+
+rbind()
+
+
+
+## Formatting
+
+###Columns
+rename column names in a df with more than one column
+colnames(x) <- c("col1","col2")
+
+
+###Dates
+> look in file 03_DataExploration_Part1
+
+>Lesson1: make sure you have proper apostrophes, and not quotation marks around format, or else you will get all NAs
+
+>>wrongEX: GaringerOzone$Date <- as.Date(GaringerOzone$Date, format = "%m/%d/%Y")
+>>rightEX: GaringerOzone$Date <- as.Date(GaringerOzone$Date, format = '%m/%d/%Y')
+
+
+
+## Packages: Tips.Tricks
+
+* The command `require(packagename)` will also load a package, but it will not give any error or warning messages if there is an issue.
+
+* You may be asked to restart R when installing or updating packages. Feel free to say no, as this will obviously slow your progress. However, if the functionality of your new package isn't working properly, try restarting R as a first step. 
+
+* If asked "Do you want to install from sources the packages which needs compilation?", type `yes` into the console. 
+
+* You should only install packages once on your machine. If you store `install.packages` in your R chunks/scripts, comment these lines out. 
+
+* Update your packages regularly! 
+
+## Knitting
+
+* In the Knit menu in the Editor, you will need to specify whether your knit directory should be the document directory or the project directory. If your document is not knitting correctly, try switching between the document directory and project directory as a first troubleshooting option.
+
+##Data Wrangling 
+
+```{r, results = "hide"}
+vignette("dplyr")
+``` 
+
+### Spreadsheets
+
+*Files should be saved as .csv or .txt for easy import into R. Note that complex formatting, including formulas in Excel, are not saved when spreadsheets are converted to comma separated or text formats (i.e., values alone are saved).
+
+*The first row is reserved for column headers.
+
+*A secondary row for column headers (e.g., units) should not be used if data are being imported into R. Incorporate units into the first row column headers if necessary.
+
+*Short names are preferred for column headers, to the extent they are informative. Additional information can be stored in comments within R scripts and/or in README files.
+
+*Spaces in column names will be replaced with a `.` when imported into R. When designing spreadsheets, avoid spaces in column headers. 
+
+*Avoid symbols in column headers. This can cause issues when importing into R.
+
+### Line Graph
+Frequency line graph (function: geom_freqpoly)
+
+An alternate to a histogram is a frequency polygon graph (distributions of values for continuous numerical variables). Instead of displaying bars,  counts of continuous variables are displayed as lines. This is advantageous if you want to display multiple variables or categories of variables at once.
+
+```{r, fig.height = 3, fig.width = 4}
+#
+ggplot(USGS.flow.data) +
+ # geom_histogram(aes(x = gage.height.mean), bins = 50) +
+  geom_freqpoly(aes(x = gage.height.mean), bins = 50) +
+  geom_freqpoly(aes(x = gage.height.min), bins = 50, color = "red") +
+  geom_freqpoly(aes(x = gage.height.max), bins = 50,  lty = 2) +
+  scale_x_continuous(limits = c(0, 10)) 
+#lty=line type #gage ht is what value to plot
+
+#color values with categorical value, and adding legend, gage ht mean approval assigns red to a records, and green to p records, can set color to different categorical value
+ggplot(USGS.flow.data) +
+  geom_freqpoly(aes(x = gage.height.mean, color = gage.height.mean.approval), bins = 50) +
+  scale_x_continuous(limits = c(0, 10)) +
+  theme(legend.position = "top")
+```
+
+
+### Select Columns 
+>From 04Part1
+
+Selecting allows us to choose certain columns (variables) in our dataset.
+
+```{r}
+NTL.phys.data.temps <- select(NTL.phys.data, lakename, sampledate:temperature_C)
+
+```
+### Mutate
+
+Mutating allows us to add new columns that are functions of existing columns. Operations include addition, subtraction, multiplication, division, log, and other functions.
+
+```{r}
+
+NTL.phys.data.temps <- mutate(NTL.phys.data.temps, temperature_F = (temperature_C*9/5) + 32)
+
+```
+
+### Lubridate
+
+A package that makes coercing date much easier is `lubridate`. A guide to the package can be found at https://lubridate.tidyverse.org/. The cheat sheet within that web page is excellent too. This package can do many things (hint: look into this package if you are having unique date-type issues), but today we will be using two of its functions for our NTL dataset. 
+
+```{r}
+# add a month column to the dataset
+NTL.phys.data.PeterPaul1 <- mutate(NTL.phys.data.PeterPaul1, month = month(sampledate)) 
+
+# reorder columns to put month with the rest of the date variables
+NTL.phys.data.PeterPaul1 <- select(NTL.phys.data.PeterPaul1, lakeid:daynum, month, sampledate:comments)
+
+# find out the start and end dates of the dataset
+interval(NTL.phys.data.PeterPaul1$sampledate[1], NTL.phys.data.PeterPaul1$sampledate[21613])
+interval(first(NTL.phys.data.PeterPaul1$sampledate), last(NTL.phys.data.PeterPaul1$sampledate))
+```
+
+
+### Pipes
+
+Sometimes we will want to perform multiple functions on a single dataset on our way to creating a processed dataset. We could do this in a series of subsequent functions or create a custom function. However, there is another method to do this that looks cleaner and is easier to read. This method is called a pipe. We designate a pipe with `%>%`. A good way to think about the function of a pipe is with the word "then." 
+
+Let's say we want to take our raw dataset (NTL.phys.data), *then* filter the data for Peter and Paul lakes, *then* select temperature and observation information, and *then* add a column for temperature in Fahrenheit: 
+
+```{r}
+NTL.phys.data.processed <- 
+  NTL.phys.data %>%
+  filter(lakename == "Paul Lake" | lakename == "Peter Lake") %>%
+  select(lakename, sampledate:temperature_C) %>%
+  mutate(temperature_F = (temperature_C*9/5) + 32)
+  
+```
+
+Notice that we did not place the dataset name inside the wrangling function but rather at the beginning.
+
+### Saving processed datasets
+
+```{r}
+write.csv(NTL.phys.data.PeterPaul1, row.names = FALSE, file = "./Data/Processed/NTL-LTER_Lake_ChemistryPhysics_PeterPaul_Processed.csv")
+```
+
+When we wrangle a raw dataset into a processed dataset, we create a code file that contains only the wrangling code. We then save the processed dataset as a new spreadsheet and then create a separate code file to analyze and visualize the dataset. 
+
+
+
+
+

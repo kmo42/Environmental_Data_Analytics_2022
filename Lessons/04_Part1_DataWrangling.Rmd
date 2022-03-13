@@ -1,5 +1,5 @@
 ---
-title: "4: Part 1 - Data Wrangling"
+title: "4: Part 1 - Data Wrangling-KO"
 author: "Environmental Data Analytics | John Fay and Luana Lima | Developed by Kateri Salk"
 date: "Spring 2021"
 output: pdf_document
@@ -22,14 +22,16 @@ Opening discussion: why might we be interested in long-term observations of temp
 
 > Add notes here: for looking at the changes to lake ph and chemistry related to environmental effects over time
 
- 
+
+
 ```{r, message = FALSE}
 #1 
 getwd()
 #install.packages(tidyverse)
 library(tidyverse)
 #install.packages(lubridate)
-library(lubridate) 
+library(lubridate)
+NTL.phys.data <- read.csv("./Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv", stringsAsFactors = TRUE)
 
 colnames(NTL.phys.data)
 head(NTL.phys.data)
@@ -40,6 +42,7 @@ dim(NTL.phys.data)
 class(NTL.phys.data$sampledate)
 # Format sampledate as date
 NTL.phys.data$sampledate <- as.Date(NTL.phys.data$sampledate, format = "%m/%d/%y")
+
 ```
 
 ## Data Wrangling
