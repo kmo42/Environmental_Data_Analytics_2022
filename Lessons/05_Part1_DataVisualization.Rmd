@@ -137,6 +137,7 @@ PMplot.line <-
   ggplot(subset(EPAair, Site.Name == "Leggett"), 
          aes(x = Date, y = PM2.5)) + # connecting order obsv on x axis, not month
   geom_line() #making a time series plot, and picked one site
+
 print(PMplot.line)
 
 
@@ -218,7 +219,7 @@ print(Nutrientplot4)
 
 ## Violin plot
 Nutrientplot5 <-
-  ggplot(PeterPaul.chem.nutrients.gathered, aes(x = lakename, y = concentration)) + #nutrietns categorized by color
+  ggplot(PeterPaul.chem.nutrients.gathered, aes(x = lakename, y = concentration)) + #nutrients categorized by color
   geom_violin(aes(color = nutrient)) #densities reflected by degree of width
 print(Nutrientplot5)
 

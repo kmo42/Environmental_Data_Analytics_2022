@@ -112,6 +112,16 @@ ggplot(USGS.flow.data) +
   theme(legend.position = "top")
 ```
 
+Example from A07_TimeSeries_Q7 of line plot with labeled axes and purple trendline
+```{r}
+
+OzoneLine.plot <- ggplot(GaringerOzone, aes(x = Date, y = Daily.Max.8.hour.Ozone.Concentration)) + #Pick variables
+  geom_line() + 
+  labs(x = "Time", y = expression("Ozone Concentration (ppm)")) +
+  geom_smooth(method = lm, color = "purple") #add a trendline
+print(OzoneLine.plot)
+```
+
 
 ### Select Columns 
 >From 04Part1
@@ -176,5 +186,24 @@ When we wrangle a raw dataset into a processed dataset, we create a code file th
 
 
 
+##Lessons
+
+###RBind
+>Question:When making large df, am I making a df or a list with rbind? rbind makes a matrix
 
 
+##Interpretation examples
+###Time Series
+####Seasonal Mann-Kendall 
+
+ Answer: Decomposing the data confirmed the presence of a seasonal trend in the data. Then the Seasonal Mann Kendall test was used to test stationarity for monotonic trends. For each season of the year represented by tau, we had a value of 1, and a p-vlaue smaller than 0.05 meaning we reject the null hypothesis and have a trend. 
+
+A07-Q14. To accompany your graph, summarize your results in context of the research question (Have ozone concentrations changed over the 2010s at this station?). 
+
+  Include output from the statistical test in parentheses at the end of your sentence. Feel free to use multiple sentences in your interpretation.
+
+> Answer: Decomposing the data confirmed the presence of a seasonal trend in the data. Then the Seasonal Mann Kendall test was used to test stationarity for monotonic trends. For each season of the year represented by tau, we had a value of 1, and a p-vlaue smaller than 0.05 meaning we reject the null hypothesis and have a trend. 
+
+>The SMK.Test was used, we saw statistical levels of pronounced results of tau for each season of the year represented by S in the first column. We also see p-values for each season as well, which represent the presence of a change in the trend. The seasonal S-values showed a consistent, positive trend meaning that was moderately pronounced, and an overall increasing trend over time as shown by the positive S-values. The seasonal p-values were also small overall, less than 0.05, demonstrating a non-stationary change in the seasonal trend over time. 
+
+>To answer the research question, yes the ozone concentrations have increased over the 2010s at this station.  
