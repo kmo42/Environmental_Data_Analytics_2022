@@ -47,9 +47,10 @@ getwd()
 library(tidyverse)
 library(lubridate)
 library(sf)
-install.packages(mapview)
+#install.packages(mapview)
 library(mapview)
 library(RColorBrewer)
+library(dplyr)
 ```
 
 # 2 READING IN SPATIAL DATA
@@ -96,6 +97,7 @@ huc8_sf <-st_read('./Data/Spatial/NCHUC8.shp')
 
 #Reveal the columns
 names(huc8_sf)
+class(huc8_sf)
 
 #Check the CRS
 st_crs(huc8_sf)
@@ -301,17 +303,19 @@ mapview(state_sf)
 ```{r Aggregate the HUC data on an attribute, saving as huc2_sf}
 #List the unique values in the DWQ_Basin field
 
-
+unique(huc8_sf$DWQ_Basin)
 
 
 #Summarize on DWQ Basin value
+huc2_sf <-huc8_sf %>%
+  group_by(DWQ_Basin) %>%
+  summarize(
+    ACRES = sum(ACRES), 
+    SQ_MILE = sum(SQ_MILES))               
 
 
-
-
-  
 #Map the data
-
+mapview(huc2_sf,zcol='ACRES')
 ```
 
 ## 3.2 Transforming coordinate reference systems of datasets
@@ -529,6 +533,8 @@ counties_WGS84 <- st_transform(counties_sf_utm, c=4326)
 state_WGS84 <- st_transform(state_sf,c=4326)
 huc8s_WGS84 <- st_transform(huc8_sf,c=4326)
 huc2_WGS84<- st_transform(huc2_sf,c=4326)
+
+
 
 #Now plot with leaflet: no errors as all layers are in Leaflet's native CRS (WGS84)
 leaflet() %>% addTiles() %>% 

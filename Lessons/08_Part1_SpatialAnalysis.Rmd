@@ -32,11 +32,11 @@ The packages we'll need for this lesson are below. Install as necessary and ensu
 library(tidyverse, quietly = TRUE)
 library(lubridate)
 
-install.packages('sf')
+#install.packages('sf')
 library(sf)
-install.packages('leaflet')
+#install.packages('leaflet')
 library(leaflet)
-install.packages('mapview')
+#install.packages('mapview')
 library(mapview)
 
 #Disable on-the-fly projections
@@ -219,7 +219,7 @@ National Center for Ecological Analysis and Synthesis created a CRS summary shee
 ---
 
 ## EXERCISE: Spatial Analysis
-Say we want to the distance between our EPA sites and the nearest Gas Plant. We don't want to report the distances in degrees, so we first want to project our data into a projected crs. We'll use the UTM Zone 17 N - WGS84 crs (EPSG = 32617) 
+Say we want to find the distance between our EPA sites and the nearest Gas Plant. We don't want to report the distances in degrees, so we first want to project our data into a projected crs. We'll use the UTM Zone 17 N - WGS84 crs (EPSG = 32617) 
 
 
 ```{r Transform the dataset}

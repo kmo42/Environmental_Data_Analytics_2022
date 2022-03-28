@@ -69,7 +69,7 @@ mapview(epa_pm25_sites_sf)
 >bonus video for energy data analytics program
 >ask for recordings for Energy-Data Analytics Program
 
->coordinate reference systems: so many diff kinds and allows us to take two separate data sets
+>coordinate reference systems: so many diff kinds and allows us to take two separate data sets, and get them to talk
 
 >confusing bit: sphere, math in gis is in planar coordinates, but really should be a curved surface, 
 >>projections=ways to rep sphere data on a flat surface, Ex: planetarium, things at poles look bigger/more blurry, with diff levels of distortion (paper around globe, candle in globe, project light through transparent globe)

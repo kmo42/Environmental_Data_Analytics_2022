@@ -207,3 +207,25 @@ A07-Q14. To accompany your graph, summarize your results in context of the resea
 >The SMK.Test was used, we saw statistical levels of pronounced results of tau for each season of the year represented by S in the first column. We also see p-values for each season as well, which represent the presence of a change in the trend. The seasonal S-values showed a consistent, positive trend meaning that was moderately pronounced, and an overall increasing trend over time as shown by the positive S-values. The seasonal p-values were also small overall, less than 0.05, demonstrating a non-stationary change in the seasonal trend over time. 
 
 >To answer the research question, yes the ozone concentrations have increased over the 2010s at this station.  
+
+##A08Spatial_Analysis Notes
+
+>with getting joining fcn and ggplots to work Q19: 
+#had to remove pipes and run st_as_sf directly on the dataframes referenced, to make it recognize the present geometry columns
+#the pipes messed up the interpretation/reading/transforming df's
+#use the least amount of pipes as possible
+#pipes are useful if doing lots of changes on the same layer (ex: mutating multiple columns in a dataframe, if changing just one column then it's good to do it directly on the object)
+
+
+>#need to use sf's w/ geometry
+>#USED a pipe bc filter & mutate only works in pipes
+#don't need c unless making a list, like filtering for two diff counties
+
+
+#23 Select gages within the selected county
+lancaster_co_gages <- gage.locations_UTM[lancaster_county_UTM,]
+#adding comma tells it to choose data from under the filtered county, vs pulling it from all the counties (undefined columns selected)
+#using the [] , the comma means choo [,]
+
+#gage.locations_UTM[,"station_nm.y"] #gives all the options in that column
+#gage.locations_UTM[1:6, "station_nm.y"]
