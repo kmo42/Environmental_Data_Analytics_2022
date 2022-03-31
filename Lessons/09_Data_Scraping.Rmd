@@ -61,6 +61,8 @@ To begin, we'll fetch the contents of the web site into our coding environment u
 webpage <- read_html('https://www.ncwater.org/WUDC/app/WWATR/report/view/0004-0001/2020')
 webpage
 ```
+> <head> = tag <>
+>Value= between <>
 
 ### Understanding web pages from a coding standpoint
 The `read_html()` function returns a list of the two elements, <head> and <body>, that comprise a typical web page. 
@@ -97,6 +99,7 @@ the_registrant <- webpage %>%
   html_nodes(".table tr:nth-child(1) td:nth-child(2)") %>% 
   html_text()
 the_registrant
+
 ```
 
 EXERCISE:
@@ -111,7 +114,7 @@ the_facility_name
 the_facility_type <- webpage %>% 
   html_nodes("tr:nth-child(2) .left~ .left+ td.left") %>% 
   html_text()
-the_facility_type
+the_facility_type 
 ```
 
 Next, we'll extract multiple items from the web page into a list object. Using Selector Gadget, highlight in yellow or green all the Average Daily Withdrawal (MGD) values from the web page. Tip: Hold the <ctrl> key down while clicking elements to add/subtract regions from selected regions.
@@ -121,12 +124,12 @@ Below is the code to extract average daily withdrawls. Add your code to extract 
 avg_withdrawals <- webpage %>% 
   html_nodes('.table:nth-child(7) td:nth-child(7) , .table:nth-child(7) td:nth-child(3)') %>%
   html_text()
-avg_withdrawals
+avg_withdrawals   #.table:nth-child(7) td:nth-child(3) , .table:nth-child(7) td:nth-child(7)
 
 max_withdrawals <- webpage %>% 
   html_nodes('.table:nth-child(7) td:nth-child(8) , .table:nth-child(7) td:nth-child(4)') %>%
   html_text()
-max_withdrawals
+max_withdrawals  #.table:nth-child(7) td:nth-child(8) , .table:nth-child(7) td:nth-child(4)
 ```
 
 
@@ -135,8 +138,8 @@ max_withdrawals
 Now that we've scraped the data we want into our coding environment, the next step is to wrangle these data into formats we can work with more easily, i.e. a dataframe. Here, we emply the techniques we've learned earlier in this class to do this and then plot the data. 
 ```{r create.dataframe.from.scrapings}
 #Create a dataframe of withdrawals
-df_withdrawals <- data.frame("Month" = rep(1:12),
-                             "Year" = rep(2000,12),
+df_withdrawals <- data.frame
+
                              "Avg_Withdrawals_mgd" = as.numeric(avg_withdrawals),
                              "Max_Withdrawals_mgd" = as.numeric(max_withdrawals))
 
