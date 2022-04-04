@@ -70,6 +70,8 @@ colnames(x) <- c("col1","col2")
 
 * In the Knit menu in the Editor, you will need to specify whether your knit directory should be the document directory or the project directory. If your document is not knitting correctly, try switching between the document directory and project directory as a first troubleshooting option.
 
+>Lesson: Cannot have the same title for R chunks!
+
 ##Data Wrangling 
 
 ```{r, results = "hide"}
