@@ -86,7 +86,34 @@ River discharge is measured daily at the Eno River gage station. Since we are wo
 
 Let's look at what the dataset contains for mean daily discharge.
 
-```{r}
+```{r, message = FALSE}
+
+library(tidyverse)
+library(lubridate)
+#install.packages("trend")
+library(trend)
+#install.packages("zoo")
+library(zoo)
+#install.packages("Kendall")
+library(Kendall)
+#install.packages("tseries")
+library(tseries)
+
+# Set theme
+mytheme <- theme_classic(base_size = 14) +
+  theme(axis.text = element_text(color = "black"), 
+        legend.position = "top")
+theme_set(mytheme)
+
+#Read Eno river data
+EnoDischarge <- read.csv("./Data/Processed/USGS_Site02085000_Flow_Processed.csv",
+                         stringsAsFactors = TRUE)
+EnoDischarge$datetime <- as.Date(EnoDischarge$datetime, format = "%Y-%m-%d")
+
+#Read wind speed data
+wind_data <- read.csv(file="./Data/Raw/Wind_Speed_PortArthurTX.csv",header=TRUE,
+                      stringsAsFactors = TRUE)
+wind_data$DATE <- ym(wind_data$DATE)
 
 ```
 

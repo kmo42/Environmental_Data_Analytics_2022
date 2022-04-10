@@ -278,9 +278,12 @@ print(G_O3_m_plot)
 
 #Separate the components and turn them into data frame
 GaringerOzone.monthly_Components <- as.data.frame(G_O3_monthly_decomp$time.series[,1:3])
+
 #Exclude seasonal column and make new data frame
 GaringerO3.monthly_NOseasonal <- GaringerOzone.monthly_Components %>%
   select(trend, remainder) #made df without seasonal column
+
+
 
 #make new time series with no seasonality component 
 #create second monthly set with old monthly df that has the date info

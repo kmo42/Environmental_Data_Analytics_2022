@@ -23,6 +23,8 @@ library(lubridate)
 #install.packages("tidyr")
 library(tidyr)
 #install.packages("dplyr")
+#install.packages("zoo")
+library(zoo)
 
 mytheme <- theme_classic(base_size = 14) +
   theme(axis.text = element_text(color = "black"), 
@@ -125,6 +127,7 @@ ggplot(all.data, aes(x=Date))+
 ```
 
 
+## Time Series
 ```{r time series}
 #Start of times series section
 
@@ -159,12 +162,19 @@ ts.power.plot <- ggplot(All_months.data, aes(x = Date, y = Power.cfs)) + #analyz
   geom_smooth(method = lm, color = "black") #add a trendline
 print(ts.power.plot)
 
-#Min/Max T
-ts.elev.plot <- ggplot(All_months.data, aes(x = Date, y = Elevation.ft)) + #analyzing Min/Max T variable over time
+#Min T
+ts.min_t.plot <- ggplot(All_months.data, aes(x = Date, y = MinT)) + #analyzing Min/Max T variable over time
   geom_line(color = "blue") + 
   labs(x = "Time", y = expression("Min/Max T")) +
   geom_smooth(method = lm, color = "black") #add a trendline
-print(ts.elev.plot)
+print(ts.min_t.plot)
+
+ts.max_t.plot <- ggplot(All_months.data, aes(x = Date, y = MaxT)) + #analyzing Min/Max T variable over time
+  geom_line(color = "purple") + 
+  labs(x = "Time", y = expression("Min/Max T")) +
+  geom_smooth(method = lm, color = "black") #add a trendline
+print(ts.max_t.plot)
+
 
 #MWH ###using this one in ts analysis
 ts.mhw.plot <- ggplot(All_months.data, aes(x = Date, y = MWH)) + #analyzing MWH variable over time
@@ -177,52 +187,177 @@ print(ts.mhw.plot)
 >Can see seasonality trends for all three of the plotted of the variables 
 
 
-#Time series analysis: Have elevation of reservoir changed over time?
-
+### Cleaning Data
 
 ```{r}
+library(sf)
+#install.packages(sf)
+library(lubridate)
+library(tidyverse)
+library(dplyr)
+#install.packages("trend")
+library(trend)
+#install.packages("zoo")
+library(zoo)
+#install.packages("Kendall")
+library(Kendall)
+#install.packages("tseries")
+library(tseries)
+
+#Time series analysis: Have MWh output of reservoir changed over time?
+```
+
+
+```{r ts monthly data '04-'20}
 summary(All_months.data) #63 NAs
 
-All_months.data_no_NA <- #removing NAs
-  All_months.data %>%  #referencing data frame to use
-  mutate(MWH_clean = #making new clean column
-           zoo::na.approx(MWH)) #cut NAs
+#All_months.data_no_NA <- #removing NAs
+#  All_months.data$MHW %>%  #referencing data frame to use
+#  mutate( MWH_clean = #making new clean column for MWH
+#          zoo::na.approx(MWH)) #cut NAs
+#received an error with the mutate function
+#going to try another way of removing 6 NAs in 2003 and 9 NAs in 2021
 
-summary(All_months.data_no_NA$MWH)
 
-#line plot of interpolated data
-ggplot(All_months.data_no_NA) +
-  geom_line(aes(x = Date, y = Daily.Max.8.hour.Ozone.Concentration_clean), color = "green") +
-  geom_line(aes(x = Date, y = Daily.Max.8.hour.Ozone.Concentration), color = "brown") +
-  ylab("Linearly Interp. Ozone Concentration (ppm)") 
-#continue on this chunk####
-```
+class(All_months.data$Date) #checking class of data column
+#Remove 3 and 9 rows to get data from 2004-2020
+#install.packages(data.table)
+library(data.table)
+new.04_20.data <- All_months.data[All_months.data$Date >= "2004-01-01" &
+                         All_months.data$Date <= "2020-12-01", ] #no NA rows !! Finally !!!
 
-```{r example ts from A07}
-summary(GaringerOzone) #63 NAs
 
-GaringerOzone_clean <- #removing NAs
-  GaringerOzone %>%  #referencing data frame to use
-  mutate(Daily.Max.8.hour.Ozone.Concentration_clean = #making new clean column
-           zoo::na.approx(Daily.Max.8.hour.Ozone.Concentration)) #cut NAs
-
-summary(GaringerOzone_clean$Daily.Max.8.hour.Ozone.Concentration_clean)
+summary(new.04_20.data$MWH) #confirm no NAs
 
 #line plot of interpolated data
-ggplot(GaringerOzone_clean) +
-  geom_line(aes(x = Date, y = Daily.Max.8.hour.Ozone.Concentration_clean), color = "blue") +
-  geom_line(aes(x = Date, y = Daily.Max.8.hour.Ozone.Concentration), color = "orange") +
+ggplot(new.04_20.data) +
+  geom_line(aes(x = Date, y = MWH), color = "green") +
+  geom_line(aes(x = Date, y = MWH), color = "brown") +
   ylab("Linearly Interp. Ozone Concentration (ppm)") 
+# nice try, no need to interpolate anything because data was included complete years between 2004-2020
+```
+### Analysis
+
+```{r}
+#make ts object to decompose later
+f.month <- month(first(new.04_20.data$Date))
+f.year <- year(first(new.04_20.data$Date))
+ 
+monthly.ts <- ts(new.04_20.data$Date, start = c(f.year, f.month), frequency=12) 
+print(monthly.ts)
+
+#visualize the decomposed series
+monthly.decomposed <- stl(monthly.ts, s.window = "periodic")
+plot(monthly.decomposed) #results in 4 plots
+
+
+
+#Run a monotonic trend analysis for the monthly series with the seasonal Mann-Kendall b/c that is the only seasonal monotonic trend analysis option. 
+
+#run test
+MWH.monthly_SMK1 <- Kendall::SeasonalMannKendall(monthly.ts)
+
+#inspect results
+MWH.monthly_SMK1
+   ## tau = 1, 2-sided pvalue =< 2.22e-16
+summary(MWH.monthly_SMK1)
+   ##  Score =  1632 , Var(Score) = 7072, denominator =  1632, 
+   ##    tau = 1, 2-sided pvalue =< 2.22e-16
+
+
+
+#run 2nd test
+MWH.monthly_SMK2 <- trend::smk.test(monthly.ts)
+#inspect results
+MWH.monthly_SMK2
+   ##
+summary(MWH.monthly_SMK2)
+   ##
+
+MWH.monthly_SMK2_plot <- #reference cleaned data before making the f_month dataset
+ggplot(new.04_20.data, aes(x = Date, y = MWH)) +
+  geom_point() +
+  geom_line() +
+  ylab("MWH Monthly Mean") +
+  geom_smooth( method = lm )
+print(MWH.monthly_SMK2_plot)
 
 ```
+>Interpretation of test results with seasonal component: Decomposing the data confirmed the presence of a seasonal trend in the data. Then the Seasonal Mann Kendall test was used to test stationarity for monotonic trends. For each season of the year represented by tau, we had a value of 1, and a p-vlaue smaller than 0.05 meaning we reject the null hypothesis and have a trend, which provides support of the alternative hypothesis. 
+
+>The SMK.Test was used, we saw statistical levels of pronounced results of tau for each season of the year represented by S in the first column. We also see p-values for each season as well, which represent the presence of a change in the trend. The seasonal S-values showed a consistent, positive trend meaning that was moderately pronounced, and an overall increasing trend over time as shown by the positive S-values. The seasonal p-values were also small overall, less than 0.05, demonstrating a non-stationary change in the seasonal trend over time. 
+
+>To answer the research question, yes the MWH have steadily increased between 2004-2020 at the Blue Mesa Dam in Colorado. 
+
+
+
+
+### Subtract Seasonal Component
+
+Subtract the seasonal component from the `monthly.ts`.
+
+Run the Mann Kendall test on the non-seasonal MWH monthly series. Compare the results with the ones obtained with the Seasonal Mann Kendall on the complete series.
+
+```{r no seasonal component}
+
+#Separate the components and turn them into data frame
+MWH.monthly_Components <- as.data.frame(monthly.decomposed$time.series[,1:3])
+#Exclude seasonal column and make new data frame
+MWH.monthly_NOseasonal <- MWH.monthly_Components %>%
+  select(trend, remainder) #made df without seasonal column
+
+
+
+#make new time series with no seasonality component, with no NA monthly data
+#create second monthly set with old monthly df that has the date info
+f.month2 <- month(first(new.04_20.data$Date))
+f.year2 <- year(first(new.04_20.data$Date))
+#make 2nd ts (no seasonality) for tests
+MWH.monthly.ts2 <- ts(new.04_20.data$Date, start = c(f.year2, f.month2), frequency=12) 
+print(MWH.monthly.ts2)
+is.ts(MWH.monthly.ts2)#check it is a ts and no longer a df
+                                # WOOHOO!!! I figured it out! <3
+
+
+
+#Run the tests again. 
+
+#run test
+MWH_monthly_SMK1.2 <- Kendall::SeasonalMannKendall(MWH.monthly.ts2)
+#inspect results
+G_O3_monthly_SMK1.2
+   ## tau = 1, 2-sided pvalue =< 2.22e-16
+
+summary(MWH_monthly_SMK1.2 )
+   ## Score =  1632 , Var(Score) = 7072, denominator =  1632, 
+   ##    tau = 1, 2-sided pvalue =< 2.22e-16
+
+
+
+#run 2nd test
+MWH_monthly_SMK2.2 <- trend::smk.test(MWH.monthly.ts2)
+#inspect results
+MWH_monthly_SMK2.2
+
+summary(MWH_monthly_SMK2.2)
+
+```
+
+> Answer: After removing the seasonal component, and running the Seasonal Mann Kendall test, tau stayed at a value of 1, and the p-value again was less than 0.05 giving support to reject the null hypothesis, and providing support for the alternative hypothesis. This means we do have the presence of a trend still, even without the seasonal component. 
+
+>When the SMK.Test was used, the seasonal S-values showed a consistent, positive trend STILL that was moderately pronounced, and an overall increasing trend over time as shown by the positive S-values. The seasonal p-values were also STILL small overall, less than 0.05, demonstrating a non-stationary change in the seasonal trend over time. 
+
+>Removing the seasonality component did not seem to change the results in the SeasonalMannKendall and smk.test tests.
+
 
 ```{r meeting notes}
 
 #to-do items:
-#make table of all.data with summary stats, averages, description
-#KO do time series part, and map
+#KO do map
 #add metadata sheet after presentation
 #add info / screenshots to slides
+
+#Cassidy needs help figuring out how to place the regression into an output folder alongside other folders
 
 
 #was able to get power plant data for two other plants with same data range, but the reservoir data didn't match up. maybe we can just show analyses on the three power plants production levels and leave the reservoir/climate data for later if needed. 
@@ -231,7 +366,8 @@ ggplot(GaringerOzone_clean) +
 #black canyon climate data goes with crystal plant, added to excel
 #need help finding climate data for glen canyon
 
-#question, data, wrangle, exploration, analysis, 6 mins + 1 minute of Q/A
-#need to figure out how to place the regression into an output folder alongside other folders
+# slides to include: question, data, wrangle, exploration, analysis, 6
+# mins + 1 minute of Q/A
+
 ```
 
