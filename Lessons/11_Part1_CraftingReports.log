@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.1) (preloaded format=pdflatex 2022.2.1)  7 APR 2022 22:47
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.1) (preloaded format=pdflatex 2022.4.8)  8 APR 2022 13:12
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -140,7 +140,7 @@ Package: textcomp 2020/02/02 v2.0n Standard LaTeX package
 Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
 tim
 ) (C:\Users\Katherine\AppData\Roaming\MiKTeX\tex/latex/microtype\microtype.sty
-Package: microtype 2021/12/10 v3.0b Micro-typographical refinements (RS)
+Package: microtype 2022/03/14 v3.0d Micro-typographical refinements (RS)
 (C:\Program Files\MiKTeX\tex/latex/graphics\keyval.sty
 Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
 \KV@toks@=\toks23
@@ -149,26 +149,27 @@ Package: etoolbox 2020/10/05 v2.5k e-TeX tools for LaTeX (JAW)
 \etb@tempcnta=\count271
 )
 \MT@toks=\toks24
-\MT@count=\count272
 \MT@tempbox=\box52
-LaTeX Info: Redefining \leftprotrusion on input line 1010.
-LaTeX Info: Redefining \rightprotrusion on input line 1018.
-LaTeX Info: Redefining \textls on input line 1173.
+\MT@count=\count272
+LaTeX Info: Redefining \noprotrusionifhmode on input line 1027.
+LaTeX Info: Redefining \leftprotrusion on input line 1028.
+LaTeX Info: Redefining \rightprotrusion on input line 1036.
+LaTeX Info: Redefining \textls on input line 1195.
 \MT@outer@kern=\dimen148
-LaTeX Info: Redefining \textmicrotypecontext on input line 1759.
+LaTeX Info: Redefining \textmicrotypecontext on input line 1781.
 \MT@listname@count=\count273
 
 (C:\Users\Katherine\AppData\Roaming\MiKTeX\tex/latex/microtype\microtype-pdftex
 .def
-File: microtype-pdftex.def 2021/12/10 v3.0b Definitions specific to pdftex (RS)
+File: microtype-pdftex.def 2022/03/14 v3.0d Definitions specific to pdftex (RS)
 
-LaTeX Info: Redefining \lsstyle on input line 897.
-LaTeX Info: Redefining \lslig on input line 897.
+LaTeX Info: Redefining \lsstyle on input line 900.
+LaTeX Info: Redefining \lslig on input line 900.
 \MT@outer@space=\skip52
 )
 Package microtype Info: Loading configuration file microtype.cfg.
 (C:\Users\Katherine\AppData\Roaming\MiKTeX\tex/latex/microtype\microtype.cfg
-File: microtype.cfg 2021/12/10 v3.0b microtype main configuration file (RS)
+File: microtype.cfg 2022/03/14 v3.0d microtype main configuration file (RS)
 )) (C:\Users\Katherine\AppData\Roaming\MiKTeX\tex/latex/parskip\parskip.sty
 Package: parskip 2021-03-14 v2.0h non-zero parskip adjustments
 (C:\Users\Katherine\AppData\Roaming\MiKTeX\tex/latex/kvoptions\kvoptions.sty
@@ -471,10 +472,10 @@ Enter file name:
 l.121 \usepackage
                  {threeparttable} 
 Here is how much of TeX's memory you used:
- 13204 strings out of 478593
- 206874 string characters out of 2854408
- 531558 words of memory out of 3000000
- 31218 multiletter control sequences out of 15000+600000
+ 13212 strings out of 478593
+ 206993 string characters out of 2854408
+ 531991 words of memory out of 3000000
+ 31226 multiletter control sequences out of 15000+600000
  472249 words of font info for 29 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  74i,0n,77p,531b,270s stack positions out of 5000i,500n,10000p,200000b,80000s

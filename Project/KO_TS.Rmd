@@ -1,0 +1,237 @@
+---
+title: "FinalProject TS DRaft"
+author: "Katherine Owens"
+date: "4/10/2022"
+output: pdf_document
+---
+
+---
+title: "Final Project"
+author: "Cassidy White, Stephanie Kinser, and Katie Owens"
+date: "4/2/2022"
+output: pdf_document
+---
+```{r}
+getwd()
+```
+
+```{r set libraries and theme}
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(lubridate)
+#install.packages("tidyr")
+library(tidyr)
+#install.packages("dplyr")
+
+mytheme <- theme_classic(base_size = 14) +
+  theme(axis.text = element_text(color = "black"), 
+        legend.position = "right") + 
+  theme_bw()
+theme_set(mytheme)
+```
+
+
+```{r load the data}
+climate<-read.csv("../Project/Processed/BlueMesaClimate.csv")
+power<-read.csv("../Project/Processed/BlueMesaPower.csv")
+reservoir<-read.csv("../Project/Processed/BlueMesaReservoir.csv")
+```
+
+```{r wrangle the data}
+#getting dates in the proper format 
+climate$Date <-as.Date(climate$Date, format = "%Y-%m-%d")
+# climate <-climate %>%
+#   mutate(Year = year(Date)) %>%
+#   mutate(Month = rep(1:12, 19)) %>%
+#   select(-c(Date))
+# climate$Date<-sprintf("%d-%02d", climate$Year, climate$Month)
+# climate<-climate %>%
+#   select(-c(Year, Month))
+
+# power<-power %>%
+#   rename(Date = ï..Date)%>%
+#   subset(select = c(Date, MWH))
+
+power$Date <- as.Date(power$Date, format = "%Y-%m-%d")
+# power<-power %>%
+#   mutate(Month = month(Date)) %>%
+#   mutate(Year = year(Date))%>%
+#   select(-c(Date))
+# power$Date<-sprintf("%d-%02d", power$Year, power$Month)
+# power<- power %>%
+#   select(-c(Year, Month))
+
+# col_order<-c("Date", "MWH")
+# power<-power[, col_order]
+
+reservoir$Date <- as.Date(reservoir$Date, format = "%d-%b-%y")
+# reservoir<-reservoir %>%
+#   mutate(Month = month(Date)) %>%
+#   mutate(Year = year(Date))%>%
+#   select(-c(Date))
+# reservoir$Date<-sprintf("%d-%02d", reservoir$Year, reservoir$Month)
+# reservoir<-reservoir %>%
+#   select(-c(Year, Month))
+
+#make a gathered data set for data viz
+climate.longer<-pivot_longer(climate, MaxT:MinT, names_to = "Min/Max", values_to = "Temperature")
+
+#make a gathered data set for data viz
+reservoir.longer<-reservoir %>%
+  pivot_longer(Inflow.cfs:Total.cfs, names_to = "Flow_Type", values_to = "Flow_(cfs)") %>%
+  pivot_longer(Storage.af:Evaporation.af, names_to = "Volume_Type", values_to = "Volume_(af)")
+
+#combine power and reservoir data
+all.data<-left_join(reservoir, climate)
+all.data<-left_join(all.data, power)
+write.csv(all.data, "AllData.csv")
+```
+
+```{r visual exploration}
+#min and max temperature over time
+ggplot(climate.longer) +
+  geom_point(aes(x = Date, y = Temperature, group = `Min/Max`, color = `Min/Max`)) +
+  labs(y="Temperature (F)", color = "Legend")
+
+#power production over time
+ggplot(power, aes(x=Date, y=MWH))+
+  geom_line()
+
+#reservoir elevation over time
+ggplot(reservoir, aes(x=Date, y = Elevation.ft))+
+  geom_line(color = "blue")+
+  ylab("Reservoir Elevation (ft)")
+
+#reservoir volume over time
+ggplot(reservoir.longer, aes(x=Date, y = `Volume_(af)`, color = `Volume_Type`))+
+  geom_line()+
+  labs(y = "Volume (af)", color = "Legend")
+
+#reservoir total flow over time
+ggplot(reservoir, aes(x=Date, y = Total.cfs))+
+  geom_line(color = "blue")+
+  labs(y = "Total Flow (cfs)")
+
+#reservoir power production by power.cfs
+#I want to do a second axis here but it isn't working. Would also need to add a legend.
+ggplot(all.data, aes(x=Date))+
+  geom_line(aes(y=Power.cfs), color = "blue")+
+  geom_line(aes(y=MWH), color = "red")+
+  scale_y_continuous(
+    name = "Power Flow (cfs)"#,
+    #sec_axis(name = waiver(MWH))
+    )
+```
+
+
+```{r time series}
+#Start of times series section
+
+#create new monthly data frame with all months (in case any were missing)
+all_months <- as.data.frame(seq(as.Date("2003-01-01"), as.Date("2021-12-01"), "month"))
+
+#rename single column in all_months to Date
+colnames(all_months) <- c("Date")
+
+#combine df with ALL days with monthly df
+All_months.data <-
+  left_join(
+  all_months,
+  all.data)
+#checked data frame and should have 227 months, check!
+```
+
+```{r visualize time series}
+#Elevation, power flow, Min/MaxT
+
+#Elevation
+ts.elev.plot <- ggplot(All_months.data, aes(x = Date, y = Elevation.ft)) + #analyzing elevation variable over time
+  geom_line(color = "darkgreen") + 
+  labs(x = "Time", y = expression("Elevation (ft)")) +
+  geom_smooth(method = lm, color = "black") #add a trendline
+print(ts.elev.plot)
+
+#Power Flow
+ts.power.plot <- ggplot(All_months.data, aes(x = Date, y = Power.cfs)) + #analyzing power variable over time
+  geom_line(color = "red") + 
+  labs(x = "Time", y = expression("Power Flow")) +
+  geom_smooth(method = lm, color = "black") #add a trendline
+print(ts.power.plot)
+
+#Min/Max T
+ts.elev.plot <- ggplot(All_months.data, aes(x = Date, y = Elevation.ft)) + #analyzing Min/Max T variable over time
+  geom_line(color = "blue") + 
+  labs(x = "Time", y = expression("Min/Max T")) +
+  geom_smooth(method = lm, color = "black") #add a trendline
+print(ts.elev.plot)
+
+#MWH ###using this one in ts analysis
+ts.mhw.plot <- ggplot(All_months.data, aes(x = Date, y = MWH)) + #analyzing MWH variable over time
+  geom_line(color = "purple") + 
+  labs(x = "Time", y = expression("MWH")) +
+  geom_smooth(method = lm, color = "black") #add a trendline
+print(ts.mhw.plot)
+
+```
+>Can see seasonality trends for all three of the plotted of the variables 
+
+
+#Time series analysis: Have elevation of reservoir changed over time?
+
+
+```{r}
+summary(All_months.data) #63 NAs
+
+All_months.data_no_NA <- #removing NAs
+  All_months.data %>%  #referencing data frame to use
+  mutate(MWH_clean = #making new clean column
+           zoo::na.approx(MWH)) #cut NAs
+
+summary(All_months.data_no_NA$MWH)
+
+#line plot of interpolated data
+ggplot(All_months.data_no_NA) +
+  geom_line(aes(x = Date, y = Daily.Max.8.hour.Ozone.Concentration_clean), color = "green") +
+  geom_line(aes(x = Date, y = Daily.Max.8.hour.Ozone.Concentration), color = "brown") +
+  ylab("Linearly Interp. Ozone Concentration (ppm)") 
+#continue on this chunk####
+```
+
+```{r example ts from A07}
+summary(GaringerOzone) #63 NAs
+
+GaringerOzone_clean <- #removing NAs
+  GaringerOzone %>%  #referencing data frame to use
+  mutate(Daily.Max.8.hour.Ozone.Concentration_clean = #making new clean column
+           zoo::na.approx(Daily.Max.8.hour.Ozone.Concentration)) #cut NAs
+
+summary(GaringerOzone_clean$Daily.Max.8.hour.Ozone.Concentration_clean)
+
+#line plot of interpolated data
+ggplot(GaringerOzone_clean) +
+  geom_line(aes(x = Date, y = Daily.Max.8.hour.Ozone.Concentration_clean), color = "blue") +
+  geom_line(aes(x = Date, y = Daily.Max.8.hour.Ozone.Concentration), color = "orange") +
+  ylab("Linearly Interp. Ozone Concentration (ppm)") 
+
+```
+
+```{r meeting notes}
+
+#to-do items:
+#make table of all.data with summary stats, averages, description
+#KO do time series part, and map
+#add metadata sheet after presentation
+#add info / screenshots to slides
+
+
+#was able to get power plant data for two other plants with same data range, but the reservoir data didn't match up. maybe we can just show analyses on the three power plants production levels and leave the reservoir/climate data for later if needed. 
+
+#used this site: https://www.usbr.gov/rsvrWater/HistoricalApp.html
+#black canyon climate data goes with crystal plant, added to excel
+#need help finding climate data for glen canyon
+
+#question, data, wrangle, exploration, analysis, 6 mins + 1 minute of Q/A
+#need to figure out how to place the regression into an output folder alongside other folders
+```
+

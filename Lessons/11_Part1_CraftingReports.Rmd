@@ -109,9 +109,9 @@ library(lubridate)
 library(knitr)
 library(tidyr)
 
-update.packages(ask = FALSE, checkBuilt = TRUE)
-tinytex::tlmgr_update()
-tinytex::reinstall_tinytex()
+#update.packages(ask = FALSE, checkBuilt = TRUE)
+#tinytex::tlmgr_update()
+#tinytex::reinstall_tinytex()
 
 #set ggplot theme
 mytheme <- theme_classic(base_size = 12) +
@@ -215,6 +215,12 @@ ggplot(NTL.lakes) +
 
 Write a paragraph describing your findings from the R coding challenge above. This should be geared toward an educated audience but one that is not necessarily familiar with the dataset. Then insert a horizontal rule below the paragraph. Below the horizontal rule, write another paragraph describing the next steps you might take in analyzing this dataset. What questions might you be able to answer, and what analyses would you conduct to answer those questions?
 
+
+This coding challenge was interesting and resulted in finding a trend of a wider range and increasing slope of nitrogen and phosphorus concentrations over time in the lakes of Wisconsin. In 1996 there seemed to be a spike in nitrogen levels, excluding Paul Lake, that lowered to relatively normal levels rather quickly afterwards. 
+
+
+
+To further explore this dataset, it would be fun to analyze the trends of phosphorus and nitrogen concentrations at varying depths and then see how the vertical stratification through the water column matches up with measurements taken at the surface. To answer these curiosities, one could plot each nutrient over a range of depths and concentrations with incremental years to show the progression through time. Also, conducting a time series analysis would help with identifying factors of high and low influence. 
 
 ## KNIT YOUR PDF
 When you have completed the above steps, try knitting your PDF to see if all of the formatting options you specified turned out as planned. This may take some troubleshooting.
