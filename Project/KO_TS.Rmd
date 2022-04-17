@@ -365,14 +365,10 @@ print(MWH.monthly_SMK2.2_plot)
 
 ```
 
-> Answer: After removing the seasonal component, and running the Mann Kendall test, tau stayed at a value of __, and the p-value again was more than 0.05 giving support for the null hypothesis, and providing support for the alternative hypothesis. This means we do have the presence of a trend still, even without the seasonal component. 
-
->When the SMK.Test was used, the seasonal S-values showed a consistent, positive trend STILL that was moderately pronounced, and an overall increasing trend over time as shown by the positive S-values. The seasonal p-values were also STILL small overall, less than 0.05, demonstrating a non-stationary change in the seasonal trend over time. 
-
->Removing the seasonality component did not seem to change the results in the MannKendall and smk.test tests.
+> Answer: After removing the seasonal component, and running the Mann Kendall test, tau had a value of 0.00212, and the p-value again was more than 0.05 giving support for the null hypothesis, and providing support for the alternative hypothesis. This means even without the seasonal component there is not a significant trend of decreasing or increasing over time in electricity generation (MHW). 
 
 
-## Spatial Analysis
+## Spatial Representation of Blue Mesa Reservoir
 
 ```{r}
 #Import the tidyverse library 
@@ -388,6 +384,26 @@ library(mapview)
 
 #Disable on-the-fly projections
 sf::sf_use_s2(FALSE)
+```
+
+### Creating a spatial dataframe from known coordinates
+
+```{r Create a spatial dataframe from scratch}
+#First create a simple feature geometry object ("sfg")
+sfg_BlueMesaRes <- st_point(c(-107.309647, 38.465418))
+class(sfg_BlueMesaRes)
+mapview(sfg_BlueMesaRes)
+
+#Upgrade to a simple feature geometry column by adding a crs 
+sfc_BlueMesaRes <- st_sfc(sfg_BlueMesaRes,crs=4326)
+class(sfc_BlueMesaRes)
+mapview(sfc_BlueMesaRes)
+
+#Upgrade to a spatial dataframe
+sf_BlueMesaRes <- st_as_sf(sfc_BlueMesaRes)
+sf_BlueMesaRes$Name = 'BlueMesaRes'
+mapview(sf_BlueMesaRes)
+
 ```
 
 
